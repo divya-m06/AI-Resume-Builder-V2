@@ -1,18 +1,26 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Resume AI Chat</h2>
+<div class="dashboard-container" style="max-width: 600px; padding-top: 40px;">
+    <div class="card">
+        <h2 class="section-title" style="font-size: 24px; margin-bottom: 20px;">Resume AI Chat</h2>
 
-<form method="POST">
-    {% csrf_token %}
-    <textarea name="user_prompt" placeholder="Ask about resume tips or questions" rows="5" cols="50"></textarea><br><br>
-    <button type="submit">Ask AI</button>
-</form>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <textarea name="user_prompt" class="form-control" placeholder="Ask about resume tips or questions" rows="5"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">Ask AI</button>
+        </form>
 
-<div style="margin-top: 20px;">
-    {% if response_text %}
-        <h3>AI Response:</h3>
-        <p>{{ response_text }}</p>
-    {% endif %}
+        {% if response_text %}
+        <div style="margin-top: 30px;">
+            <h3 style="margin-bottom: 12px; font-size: 18px;">AI Response:</h3>
+            <div style="background: #fafaf8; padding: 16px; border-radius: 10px; border: 1.5px solid #e0e0d8; color: var(--brand-charcoal); line-height: 1.6;">
+                <p>{{ response_text }}</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}

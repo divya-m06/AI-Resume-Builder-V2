@@ -2,148 +2,86 @@
 <html lang="en">
 {% load static %}
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Create Resume</title>
-
-<style>
-body {
-    font-family: 'Poppins', sans-serif;
-    background: #0b0f29;
-    margin: 0;
-    padding: 0;
-    color: white;
-}
-
-.form-container {
-    width: 90%;
-    max-width: 900px;
-    margin: 40px auto;
-    background: #122044;
-    padding: 30px;
-    border-radius: 14px;
-    box-shadow: 0 0 20px rgba(0,255,255,0.3);
-}
-
-h1 {
-    text-align: center;
-    font-size: 42px;
-    font-weight: 800;
-    color: #00eaff;
-    margin-bottom: 30px;
-}
-
-form p {
-    margin-bottom: 18px;
-    display: flex;
-    flex-direction: column;
-}
-
-label {
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 6px;
-}
-
-input, textarea, select {
-    padding: 12px;
-    border-radius: 8px;
-    border: none;
-    width: 100%;
-    background: white;
-    color: black;
-    font-size: 15px;
-}
-
-textarea {
-    height: 120px;
-    resize: vertical;
-}
-
-button {
-    width: 100%;
-    padding: 14px;
-    border: none;
-    background: #00c3ff;
-    border-radius: 8px;
-    font-size: 17px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: .3s;
-}
-
-button:hover {
-    background: #00a4d4;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Resume</title>
+    <link rel="stylesheet" href="{% static 'resume_app/style.css' %}">
 </head>
+<body class="section-light">
 
-<body>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="logo">AI Resume Builder</div>
+        <div class="nav-links">
+            <a href="{% url 'home' %}">Dashboard</a>
+        </div>
+    </nav>
 
-<div class="form-container">
-    <h1>Create Resume</h1>
+    <div class="dashboard-container">
+        <h1 class="section-title">Create Resume</h1>
+        <p class="section-subtext" style="margin-bottom: 40px;">Fill out the details below to generate your professional resume.</p>
 
-    <form method="POST" action="">
-        {% csrf_token %}
+        <form method="POST" action="">
+            {% csrf_token %}
 
-        <p>
-            <label>Full Name</label>
-            {{ form.full_name }}
-        </p>
+            <div class="card" style="margin-bottom: 20px;">
+                <h3 style="margin-bottom: 20px; text-transform: uppercase; font-size: 14px; letter-spacing: 1px;">Personal Information</h3>
+                <div class="form-group">
+                    <label>Full Name</label>
+                    {{ form.full_name }}
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    {{ form.email }}
+                </div>
+                <div class="form-group">
+                    <label>Phone</label>
+                    {{ form.phone }}
+                </div>
+            </div>
 
-        <p>
-            <label>Email</label>
-            {{ form.email }}
-        </p>
+            <div class="card" style="margin-bottom: 20px;">
+                <h3 style="margin-bottom: 20px; text-transform: uppercase; font-size: 14px; letter-spacing: 1px;">Professional Details</h3>
+                <div class="form-group">
+                    <label>Education</label>
+                    {{ form.education }}
+                </div>
+                <div class="form-group">
+                    <label>Experience</label>
+                    <select name="experience" class="form-control" required>
+                        <option value="" disabled selected>Select Experience Level</option>
+                        <option value="Fresher (0–1 years)">Fresher (0–1 years)</option>
+                        <option value="1–2 years experience">1–2 years experience</option>
+                        <option value="2–5 years experience">2–5 years experience</option>
+                        <option value="5+ years experience">5+ years experience</option>
+                        <option value="As per resume / Custom">As per resume / Custom</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Job Role</label>
+                    {{ form.job_role }}
+                </div>
+                <div class="form-group">
+                    <label>Skills</label>
+                    {{ form.skills }}
+                </div>
+            </div>
 
-        <p>
-            <label>Phone</label>
-            {{ form.phone }}
-        </p>
+            <div class="card" style="margin-bottom: 20px;">
+                <h3 style="margin-bottom: 20px; text-transform: uppercase; font-size: 14px; letter-spacing: 1px;">Experience & Projects</h3>
+                <div class="form-group">
+                    <label>Project Details</label>
+                    <textarea name="projects" rows="4" class="form-control" placeholder="Describe your projects..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Previous Company Details</label>
+                    <textarea name="previous_company" rows="4" class="form-control" placeholder="Enter company details..."></textarea>
+                </div>
+            </div>
 
-        <p>
-            <label>Education</label>
-            {{ form.education }}
-        </p>
-
-        <!-- ✅ UPDATED EXPERIENCE DROPDOWN -->
-        <p>
-            <label>Experience</label>
-            <select name="experience" required>
-                <option value="" disabled selected>Select Experience Level</option>
-                <option value="Fresher (0–1 years)">Fresher (0–1 years)</option>
-                <option value="1–2 years experience">1–2 years experience</option>
-                <option value="2–5 years experience">2–5 years experience</option>
-                <option value="5+ years experience">5+ years experience</option>
-                <option value="As per resume / Custom">As per resume / Custom</option>
-            </select>
-        </p>
-
-        <p>
-            <label>Skills</label>
-            {{ form.skills }}
-        </p>
-
-        <p>
-            <label>Job Role</label>
-            {{ form.job_role }}
-        </p>
-
-        <!-- 🔥 PROJECT FIELD -->
-        <p>
-            <label>Project Details</label>
-            <textarea name="projects" rows="4" placeholder="Describe your projects..."></textarea>
-        </p>
-
-        <!-- PREVIOUS COMPANY FIELD -->
-        <p>
-            <label>Previous Company Details</label>
-            <textarea name="previous_company" rows="4" placeholder="Enter company details..."></textarea>
-        </p>
-
-        <button type="submit">Generate Resume</button>
-    </form>
-</div>
+            <button type="submit" class="btn btn-primary btn-full" style="padding: 16px; font-size: 16px;">Generate Resume</button>
+        </form>
+    </div>
 
 </body>
 </html>

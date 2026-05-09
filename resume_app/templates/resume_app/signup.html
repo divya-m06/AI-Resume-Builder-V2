@@ -1,121 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
+{% load static %}
 <head>
     <meta charset="UTF-8">
     <title>Sign Up - AI Resume Builder</title>
-
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(135deg, #050b24, #091041, #081124);
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: "Poppins", sans-serif;
-            color: white;
-        }
-
-        .title {
-            position: absolute;
-            top: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 42px;
-            font-weight: 700;
-            background: linear-gradient(90deg, #00eaff, #00c6ff, #0099ff);
-            -webkit-background-clip: text;
-            color: transparent;
-            letter-spacing: 1px;
-        }
-
-        .signup-box {
-            width: 450px;
-            background: rgba(255,255,255,0.05);
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 0 25px rgba(0, 255, 255, 0.3);
-            backdrop-filter: blur(10px);
-            text-align: center;
-        }
-
-        .signup-box h2 {
-            margin-bottom: 25px;
-            font-size: 24px;
-            color: #00eaff;
-        }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            margin-top: 12px;
-            border-radius: 8px;
-            border: none;
-            outline: none;
-            background: #ffffff;
-            color: black;
-            font-size: 15px;
-        }
-
-        button {
-            width: 100%;
-            margin-top: 25px;
-            padding: 12px;
-            font-size: 16px;
-            background: #00ffd2;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            color: #000;
-            font-weight: 700;
-            transition: 0.3s;
-        }
-
-        button:hover {
-            background: #00d8b8;
-        }
-
-        .link {
-            margin-top: 15px;
-            display: block;
-            color: #00eaff;
-            text-decoration: none;
-        }
-
-        .error {
-            color: #ff6363;
-            margin-top: 10px;
-        }
-    </style>
-
+    <link rel="stylesheet" href="{% static 'resume_app/style.css' %}">
 </head>
-<body>
+<body class="auth-page">
 
-<h1 class="title">AI Resume Builder</h1>
+    <div class="card auth-card">
+        <h1>AI Resume Builder</h1>
+        <h2>Create Account</h2>
 
-<div class="signup-box">
-    <h2>Create Account</h2>
+        {% if messages %}
+            <div class="alert">
+                {% for message in messages %}
+                    <p class="alert-error">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
 
-    {% if messages %}
-        {% for message in messages %}
-        <p class="error">{{ message }}</p>
-        {% endfor %}
-    {% endif %}
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" name="name" placeholder="Full Name" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" name="email" placeholder="Email Address" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="text" name="phone" placeholder="Phone Number" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Choose User ID</label>
+                <input type="text" name="userid" placeholder="Choose User ID" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Create Password</label>
+                <input type="password" name="password" placeholder="Create Password" class="form-control" required>
+            </div>
 
-    <form method="POST">
-        {% csrf_token %}
-        <input type="text" name="name" placeholder="Full Name" required>
-        <input type="email" name="email" placeholder="Email Address" required>
-        <input type="text" name="phone" placeholder="Phone Number" required>
-        <input type="text" name="userid" placeholder="Choose User ID" required>
-        <input type="password" name="password" placeholder="Create Password" required>
+            <button type="submit" class="btn btn-primary btn-full">Sign Up</button>
+        </form>
 
-        <button type="submit">Sign Up</button>
-    </form>
-
-    <a href="{% url 'login' %}" class="link">Already have an account? Login</a>
-</div>
+        <p style="margin-top: 16px;">
+            <a href="{% url 'login' %}">Already have an account? Login</a>
+        </p>
+    </div>
 
 </body>
 </html>

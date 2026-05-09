@@ -5,293 +5,77 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Resume Builder - Home</title>
-
-    <style>
-        /* --- GLOBAL STYLES --- */
-        body {
-            margin: 0;
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(120deg, #101232, #191c45, #0b0d26);
-            color: #ffffff;
-            overflow-x: hidden;
-        }
-
-        /* --- NAVBAR --- */
-        .navbar {
-            width: 100%;
-            padding: 15px 40px;
-            box-sizing: border-box;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: fixed;
-            top: 0;
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            z-index: 1000;
-        }
-
-        .logo {
-            font-size: 22px;
-            font-weight: 700;
-            background: linear-gradient(90deg, #00eaff, #00ffaa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .nav-links a {
-            margin-left: 25px;
-            text-decoration: none;
-            color: #d4d7ff;
-            font-size: 16px;
-            transition: 0.3s;
-        }
-
-        .nav-links a:hover {
-            color: #00eaff;
-        }
-
-        /* --- FLOATING BACKGROUND BUBBLES --- */
-        .bubble {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(0,255,200,0.15);
-            animation: float 8s infinite ease-in-out;
-            filter: blur(10px);
-        }
-
-        .bubble:nth-child(1) {
-            width: 150px;
-            height: 150px;
-            top: 10%;
-            left: 5%;
-        }
-
-        .bubble:nth-child(2) {
-            width: 250px;
-            height: 250px;
-            bottom: 15%;
-            right: 10%;
-            animation-duration: 12s;
-        }
-
-        @keyframes float {
-            0% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-40px) rotate(10deg); }
-            100% { transform: translateY(0) rotate(0deg); }
-        }
-
-        /* --- TITLE SECTION --- */
-        .title {
-            margin-top: 120px;
-            text-align: center;
-            font-size: 50px;
-            font-weight: 800;
-            background: linear-gradient(90deg, #00eaff, #00ffaa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: 2px;
-        }
-
-        .typing {
-            width: fit-content;
-            margin: 10px auto;
-            border-right: 3px solid #00eaff;
-            white-space: nowrap;
-            overflow: hidden;
-            font-size: 18px;
-            color: #c5c9ff;
-            animation: typing 8s steps(40) infinite, blink .7s infinite;
-        }
-
-        @keyframes typing {
-            0% { width: 0px; }
-            50% { width: 250px; }
-            100% { width: 0px; }
-        }
-
-        @keyframes blink {
-            0%, 50% { border-color: transparent; }
-            100% { border-color: #00eaff; }
-        }
-
-        /* --- CARD MENU --- */
-        .menu-container {
-            display: flex;
-            justify-content: center;
-            gap: 40px;
-            margin-top: 60px;
-            flex-wrap: wrap;
-        }
-
-        .menu-card {
-            background: rgba(255,255,255,0.08);
-            padding: 30px 35px;
-            border-radius: 18px;
-            width: 260px;
-            text-align: center;
-            cursor: pointer;
-            transition: 0.3s;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .menu-card:hover {
-            transform: translateY(-12px) scale(1.03);
-            box-shadow: 0px 12px 25px rgba(0,255,255,0.3);
-        }
-
-        .menu-card a {
-            text-decoration: none;
-            color: #00eaff;
-            font-size: 20px;
-            font-weight: 600;
-        }
-
-        .emoji {
-            font-size: 38px;
-            display: block;
-            margin-bottom: 8px;
-        }
-
-        /* --- FEATURES SECTION --- */
-        .section {
-            margin-top: 90px;
-            padding: 0 50px;
-            text-align: center;
-        }
-
-        .section h2 {
-            font-size: 32px;
-            background: linear-gradient(90deg, #00ffaa, #00eaff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .features {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-top: 35px;
-            flex-wrap: wrap;
-        }
-
-        .feature-box {
-            width: 280px;
-            padding: 20px;
-            background: rgba(255,255,255,0.08);
-            border-radius: 16px;
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: 0.3s;
-        }
-
-        .feature-box:hover {
-            transform: scale(1.05);
-            box-shadow: 0px 12px 20px rgba(0,255,200,0.25);
-        }
-
-        .feature-title {
-            font-size: 20px;
-            color: #00ffaa;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-
-        .feature-text {
-            color: #c6c8e3;
-            font-size: 14px;
-        }
-
-        /* --- FOOTER --- */
-        .footer {
-            text-align: center;
-            padding: 25px;
-            margin-top: 90px;
-            font-size: 14px;
-            color: #8f92c9;
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'resume_app/style.css' %}">
 </head>
-
 <body>
 
-    <!-- Floating Glowing Bubbles -->
-    <div class="bubble"></div>
-    <div class="bubble"></div>
-
     <!-- NAVBAR -->
-    <div class="navbar">
+    <nav class="navbar">
         <div class="logo">Welcome {{ username|default:"User" }}</div>
-
-        <div class="nav-links" style="margin-left:auto; display:flex; align-items:center;">
+        <div class="nav-links">
             <a href="{% url 'logout' %}"
                onclick="return confirm('Are you sure you want to logout?')"
-               style="
-                    padding:8px 18px;
-                    border-radius:22px;
-                    background:linear-gradient(90deg,#ff4d4d,#ff0000);
-                    color:white;
-                    font-weight:600;
-                    text-decoration:none;
-                    white-space:nowrap;
-                    box-shadow:0 4px 12px rgba(255,0,0,0.4);
-                    transition:0.3s;
-               "
-               onmouseover="this.style.transform='scale(1.05)'"
-               onmouseout="this.style.transform='scale(1)'"
+               class="btn-nav-primary"
             >
                 Logout
             </a>
         </div>
-    </div>
+    </nav>
 
-    <!-- MAIN TITLE -->
-    <h1 class="title">AI Resume Builder</h1>
-    <div class="typing">Build Smarter • Faster • Better ✨</div>
-
-    <!-- MENU CARDS -->
-    <div class="menu-container">
-        <div class="menu-card">
-            <span class="emoji">📄</span>
-            <a href="{% url 'create_resume' %}">Create Resume</a>
+    <div class="dashboard-container">
+        
+        <!-- MAIN TITLE -->
+        <div class="section-light" style="padding: 40px 0; text-align: center;">
+            <h1 class="section-title">AI Resume Builder</h1>
+            <p class="section-subtext">Build Smarter, Faster, Better</p>
         </div>
 
-        <div class="menu-card">
-            <span class="emoji">🧠</span>
-            <a href="{% url 'skill_gap_form' %}">Skill Gap Analysis</a>
-        </div>
-
-        <div class="menu-card">
-            <span class="emoji">📘</span>
-            <a href="{% url 'jd_analyzer_form' %}">Skill-Driven Project Suggestions</a>
-        </div>
-    </div>
-
-    <!-- Features Section -->
-    <div class="section">
-        <h2>Why Choose Our AI Builder?</h2>
-
-        <div class="features">
-            <div class="feature-box">
-                <div class="feature-title">⚡ Instant Generation</div>
-                <div class="feature-text">Create a resume in seconds with AI-powered structuring.</div>
+        <!-- MENU CARDS -->
+        <div class="results-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); margin-bottom: 60px;">
+            <div class="card" style="text-align: center;">
+                <h3 style="margin-bottom: 16px;">Create Resume</h3>
+                <a href="{% url 'create_resume' %}" class="btn btn-primary btn-full">Start</a>
             </div>
-            <div class="feature-box">
-                <div class="feature-title">✔ ATS Friendly</div>
-                <div class="feature-text">Optimized format ensures your resume passes recruiter filters.</div>
+
+            <div class="card" style="text-align: center;">
+                <h3 style="margin-bottom: 16px;">Skill Gap Analysis</h3>
+                <a href="{% url 'skill_gap_form' %}" class="btn btn-primary btn-full">Start</a>
             </div>
-            <div class="feature-box">
-                <div class="feature-title">📊 Skill Gap Insights</div>
-                <div class="feature-text">Understand what you lack and improve your resume instantly.</div>
+
+            <div class="card" style="text-align: center;">
+                <h3 style="margin-bottom: 16px;">Skill-Driven Project Suggestions</h3>
+                <a href="{% url 'jd_analyzer_form' %}" class="btn btn-primary btn-full">Start</a>
             </div>
         </div>
-    </div>
 
-    <!-- FOOTER -->
-    <div class="footer">
-        © 2025 AI Resume Builder — Made with 💙 for Students & Professionals.
+        <!-- Features Section -->
+        <div class="section-light" style="padding-top: 0;">
+            <h2 class="section-title">Why Choose Our AI Builder?</h2>
+            <div class="results-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+                
+                <div class="card">
+                    <h3 style="color: var(--brand-olive-dk); margin-bottom: 10px;">Instant Generation</h3>
+                    <p style="font-size: 14px;">Create a resume in seconds with AI-powered structuring.</p>
+                </div>
+                
+                <div class="card">
+                    <h3 style="color: var(--brand-olive-dk); margin-bottom: 10px;">ATS Friendly</h3>
+                    <p style="font-size: 14px;">Optimized format ensures your resume passes recruiter filters.</p>
+                </div>
+                
+                <div class="card">
+                    <h3 style="color: var(--brand-olive-dk); margin-bottom: 10px;">Skill Gap Insights</h3>
+                    <p style="font-size: 14px;">Understand what you lack and improve your resume instantly.</p>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div style="text-align: center; padding: 40px; color: #888; font-size: 14px;">
+            © 2025 AI Resume Builder — Made for Students & Professionals.
+        </div>
+
     </div>
 
 </body>

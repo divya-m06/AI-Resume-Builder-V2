@@ -1,144 +1,76 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+{% load static %}
 <head>
-<meta charset="UTF-8">
-<title>JD Keyword Result</title>
-
-<style>
-body{ 
-    background:#07101d; 
-    color:white; 
-    font-family:"Poppins", sans-serif; 
-    padding:40px; 
-}
-h1{
-    font-size:40px;
-    font-weight:800;
-    text-align:center;
-    background:linear-gradient(90deg,#00eaff,#0084ff);
-    -webkit-background-clip:text;
-    color:transparent;
-}
-
-/* Box container */
-.box{
-    padding:25px;
-    background:#11172b;
-    border-radius:14px;
-    margin-bottom:30px;
-    box-shadow:0 0 20px rgba(0,255,255,0.12);
-}
-
-/* Keyword badges */
-.badge{
-    display:inline-block;
-    background:#003b88;
-    padding:10px 16px;
-    border-radius:8px;
-    margin:6px;
-    font-size:15px;
-    font-weight:600;
-}
-
-/* Score display */
-.score{
-    font-size:55px;
-    font-weight:800;
-    color:#00eaff;
-    text-align:center;
-    letter-spacing:2px;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JD Keyword Result</title>
+    <link rel="stylesheet" href="{% static 'resume_app/style.css' %}">
 </head>
+<body class="section-light">
 
-<body>
-
-<h1>JD Keyword Match Result</h1>
-
-<!-- SCORE -->
-<div class="box">
-    <div class="score">{{ score }}%</div>
-</div>
-
-<!-- MATCHED KEYWORDS -->
-<div class="box">
-    <h2>Matched Keywords</h2>
-    {% for m in matched %}
-        <span class="badge">{{ m }}</span>
-    {% empty %}
-        <p>No keyword matches found</p>
-    {% endfor %}
-</div>
-
-<!-- ⭐ SUGGESTED PROJECTS -->
-<div class="box">
-    <h2 style="font-size:32px; margin-bottom:15px;">🔥 Suggested Interview Projects</h2>
-
-    {% for p in suggested_projects %}
-        <div style="
-            background:#0e1a2f;
-            padding:20px;
-            margin-bottom:18px;
-            border-radius:12px;
-            border:1px solid #163057;
-        ">
-
-            <!-- Project Title -->
-            <h3 style="font-size:26px; font-weight:800; color:#00eaff; margin-bottom:10px;">
-                {{ p.title }}
-            </h3>
-
-            <!-- Description -->
-            <p style="font-size:16px; color:#d4d7ff; line-height:1.6;">
-                {{ p.description }}
-            </p>
-
-            <!-- Tech Stack -->
-            <div style="margin:10px 0;">
-                {% for tech in p.stack %}
-                    <span style="
-                        background:#10233f;
-                        padding:6px 12px;
-                        border-radius:8px;
-                        color:#7ed3ff;
-                        font-size:13px;
-                        margin:4px;
-                        display:inline-block;
-                    ">
-                        {{ tech }}
-                    </span>
-                {% endfor %}
-            </div>
-
-            <!-- Resource Links (FIXED) -->
-            <div style="margin-top:12px;">
-                <a href="{{ p.github }}"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   style="color:#00ffaa; margin-right:15px; font-weight:600; font-size:15px;">
-                   GitHub 🔗
-                </a>
-
-                <a href="{{ p.video }}"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   style="color:#00eaff; margin-right:15px; font-weight:600; font-size:15px;">
-                   Video ▶️
-                </a>
-
-                <a href="{{ p.article }}"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   style="color:#6eb6ff; font-weight:600; font-size:15px;">
-                   Article 📄
-                </a>
-            </div>
-
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="logo">AI Resume Builder</div>
+        <div class="nav-links">
+            <a href="{% url 'home' %}">Dashboard</a>
         </div>
-    {% empty %}
-        <p>No project suggestions available.</p>
-    {% endfor %}
-</div>
+    </nav>
+
+    <div class="dashboard-container">
+        <h1 class="section-title">JD Keyword Match Result</h1>
+        
+        <div class="results-grid">
+            
+            <div class="column-1">
+                <div class="card" style="margin-bottom: 24px; text-align: center;">
+                    <h3 style="margin-bottom: 16px; color: var(--brand-olive-dk);">Match Score</h3>
+                    <div style="font-size: 55px; font-weight: 800; color: var(--brand-charcoal);">
+                        {{ score }} <span style="font-size: 24px; color: #888;">%</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 style="margin-bottom: 16px;">Matched Keywords</h3>
+                    <div>
+                        {% for m in matched %}
+                            <span class="tag-olive">{{ m }}</span>
+                        {% empty %}
+                            <p style="font-size: 14px; color: #666;">No keyword matches found</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="column-2">
+                <div class="card">
+                    <h3 style="margin-bottom: 20px;">Suggested Interview Projects</h3>
+
+                    {% for p in suggested_projects %}
+                        <div style="border: 1px solid #ebebeb; border-radius: 12px; padding: 20px; margin-bottom: 16px; background: #fafaf8;">
+                            <h4 style="font-size: 18px; margin-bottom: 8px; color: var(--brand-olive-dk);">{{ p.title }}</h4>
+                            <p style="font-size: 14px; color: #555; margin-bottom: 12px; line-height: 1.5;">{{ p.description }}</p>
+                            
+                            <div style="margin-bottom: 16px;">
+                                {% for tech in p.stack %}
+                                    <span class="tag-dark">{{ tech }}</span>
+                                {% endfor %}
+                            </div>
+
+                            <div style="display: flex; gap: 12px;">
+                                <a href="{{ p.github }}" target="_blank" rel="noopener noreferrer" style="font-size: 13px; font-weight: 600;">GitHub</a>
+                                <a href="{{ p.video }}" target="_blank" rel="noopener noreferrer" style="font-size: 13px; font-weight: 600;">Video</a>
+                                <a href="{{ p.article }}" target="_blank" rel="noopener noreferrer" style="font-size: 13px; font-weight: 600;">Article</a>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p style="font-size: 14px; color: #666;">No project suggestions available.</p>
+                    {% endfor %}
+                </div>
+            </div>
+            
+        </div>
+    </div>
 
 </body>
 </html>
