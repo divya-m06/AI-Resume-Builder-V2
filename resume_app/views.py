@@ -66,6 +66,11 @@ def home(request):
 
 
 
+def landing_page(request):
+    if request.session.get("logged_user"):
+        return redirect("home")
+    return render(request, "resume_app/landing.html")
+
 # ---------------- LOGIN ----------------
 def login_page(request):
     if request.method == "POST":
