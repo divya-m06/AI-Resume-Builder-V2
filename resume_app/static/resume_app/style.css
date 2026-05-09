@@ -1,0 +1,77 @@
+/* ---------- GLOBAL STYLING ---------- */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: radial-gradient(circle at top left, #5483da, #2e70c1, #4c347c);
+    color: #fff;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+/* Container */
+.container {
+    text-align: center;
+    width: 100%;
+    max-width: 900px;
+    padding: 20px;
+}
+
+.card a:hover {
+  text-decoration: underline;
+  color: #00ffa0;
+}
+
+
+/* Heading */
+h1 {
+    font-size: 3.2rem;
+    font-weight: 700;
+    margin-bottom: 50px;
+    background: linear-gradient(90deg, #57267c, #4e1d6b, #29709f);
+    -webkit-background-clip: text; /* Chrome, Safari */
+    background-clip: text;         /* Standard version to remove warning */
+    color: transparent;
+    animation: shine 4s infinite linear;
+    letter-spacing: 2px;
+}
+
+@keyframes shine {
+    from { filter: brightness(0.8); }
+    to { filter: brightness(1.2); }
+}
+
+/* Card Container */
+.card-container {
+    display: flex;
+    justify-content: center;
+    gap: 35px;
+    flex-wrap: wrap;
+}
+
+/* Card Buttons */
+.card {
+    text-decoration: none;
+    color: #fff;
+    font-size: 1.3rem;
+    padding: 20px 35px;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    transition: 0.3s ease-in-out;
+}
+
+/* Hover Effects */
+.card:hover {
+    transform: translateY(-8px);
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.35);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+}
+
+/* Individual Button Colors */
+.create { border-left: 4px solid #00d4ff; }
+.edit { border-left: 4px solid #2b5c7c; }
+.analyze { border-left: 4px solid #2980b9; }

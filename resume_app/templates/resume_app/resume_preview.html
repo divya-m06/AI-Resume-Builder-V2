@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Resume Preview</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 40px;
+            background: #0b0f29;
+            font-family: "Poppins", sans-serif;
+            color: black;
+            display: flex;
+            justify-content: center;
+        }
+
+        .resume-container {
+            width: 850px;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0,255,255,0.3);
+        }
+
+        h1 {
+            font-size: 38px;
+            font-weight: 800;
+            color: #003b88;
+            margin-bottom: 5px;
+        }
+
+        .contact {
+            color: #555;
+            font-size: 15px;
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #003b88;
+            border-bottom: 2px solid #003b88;
+            margin-top: 30px;
+            margin-bottom: 10px;
+            padding-bottom: 4px;
+        }
+
+        .section-content {
+            font-size: 15px;
+            color: #222;
+            line-height: 1.6;
+        }
+
+        .button-box {
+            margin-top: 25px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 8px;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            width: 200px;
+            text-align: center;
+        }
+
+        .pdf-btn { background: #00b8ff; color: black; }
+        .word-btn { background: #00ffd2; color: black; }
+        .edit-btn { background: #ffc400; color: black; }
+
+        .btn:hover { opacity: 0.85; }
+
+    </style>
+</head>
+
+<body>
+
+<div class="resume-container">
+
+    <!-- NAME -->
+    <h1>{{ resume.full_name }}</h1>
+
+    <!-- CONTACT INFO -->
+    <div class="contact">
+        {{ resume.email }} • {{ resume.phone }}
+    </div>
+
+    <!-- JOB ROLE -->
+    <div class="section-title">Applied For</div>
+    <div class="section-content">{{ resume.job_role }}</div>
+
+    <!-- EDUCATION -->
+    <div class="section-title">Education</div>
+    <div class="section-content">{{ resume.education }}</div>
+
+    <!-- EXPERIENCE -->
+    <div class="section-title">Experience</div>
+    <div class="section-content">{{ resume.experience }}</div>
+
+    <!-- SKILLS (LIST) -->
+    <div class="section-title">Skills</div>
+    <div class="section-content">
+        {% for skill in resume.skills %}
+            • {{ skill }} <br>
+        {% endfor %}
+    </div>
+
+    <!-- PROJECTS -->
+    {% if resume.projects %}
+        <div class="section-title">Projects</div>
+        <div class="section-content">{{ resume.projects }}</div>
+    {% endif %}
+
+    <!-- PREVIOUS COMPANY -->
+    {% if resume.previous_company %}
+        <div class="section-title">Previous Company</div>
+        <div class="section-content">{{ resume.previous_company }}</div>
+    {% endif %}
+
+    <!-- BUTTONS -->
+    <div class="button-box">
+
+        <form method="POST" action="{% url 'download_resume_pdf' %}">
+            {% csrf_token %}
+            <input type="hidden" name="resume_text" value="{{ resume }}">
+            <button class="btn pdf-btn">Download PDF</button>
+        </form>
+
+        <form method="POST" action="{% url 'download_resume_doc' %}">
+            {% csrf_token %}
+            <input type="hidden" name="resume_text" value="{{ resume }}">
+            <button class="btn word-btn">Download Word</button>
+        </form>
+
+        <a href="{% url 'create_resume' %}" class="btn edit-btn">Edit Resume</a>
+    </div>
+
+</div>
+
+</body>
+</html>

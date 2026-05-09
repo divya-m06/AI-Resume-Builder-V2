@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - AI Resume Builder</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* RESET */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at top, #0b1d3a, #050b24 65%);
+            font-family: "Poppins", sans-serif;
+            color: white;
+        }
+
+        /* PAGE CENTER (Title + Card as ONE UNIT) */
+        .page-center {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;   /* vertical center */
+            align-items: center;       /* horizontal center */
+            gap: 26px;
+        }
+
+        /* TITLE */
+        .title {
+            font-size: 44px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            background: linear-gradient(90deg, #00eaff, #00c6ff, #7aa8ff);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        /* LOGIN CARD */
+        .login-box {
+            width: 420px;
+            padding: 42px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 35px rgba(0, 234, 255, 0.25);
+            text-align: center;
+        }
+
+        /* ICON */
+        .icon {
+            width: 85px;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 0 12px rgba(0,234,255,0.6));
+        }
+
+        /* HEADING */
+        .login-box h2 {
+            margin: 14px 0 24px;
+            font-size: 26px;
+            font-weight: 600;
+            color: #00eaff;
+        }
+
+        /* ERROR MESSAGE */
+        .error {
+            color: #ff6b6b;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        /* INPUT GROUP */
+        .input-group {
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .input-group span {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+            font-size: 15px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 12px 12px 42px;
+            border-radius: 10px;
+            border: none;
+            outline: none;
+            background: rgba(255,255,255,0.96);
+            font-size: 15px;
+        }
+
+        input:focus {
+            box-shadow: 0 0 10px rgba(0, 234, 255, 0.6);
+        }
+
+        /* BUTTON */
+        button {
+            width: 100%;
+            margin-top: 18px;
+            padding: 13px;
+            border-radius: 10px;
+            border: none;
+            font-size: 16px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #00eaff, #00b7ff);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            transform: scale(1.04);
+            box-shadow: 0 0 16px rgba(0,234,255,0.7);
+        }
+
+        /* LINK */
+        .link {
+            margin-top: 16px;
+            display: block;
+            color: #00eaff;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .link:hover {
+            text-decoration: underline;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 500px) {
+            .login-box {
+                width: 90%;
+                padding: 32px;
+            }
+
+            .title {
+                font-size: 34px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page-center">
+
+    <!-- TITLE -->
+    <h1 class="title">AI Resume Builder</h1>
+
+    <!-- LOGIN CARD -->
+    <div class="login-box">
+
+        <img class="icon" src="https://cdn-icons-png.flaticon.com/512/942/942748.png" alt="Resume Icon">
+
+        <h2>Welcome Back</h2>
+
+        {% if messages %}
+            {% for message in messages %}
+                <p class="error">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="input-group">
+                <span>👤</span>
+                <input type="text" name="userid" placeholder="User ID" required>
+            </div>
+
+            <div class="input-group">
+                <span>🔒</span>
+                <input type="password" name="password" placeholder="Password" required>
+            </div>
+
+            <button type="submit">Login</button>
+        </form>
+        <p>
+        <a href="{% url 'forgot_password' %}" style="color:#00c3ff">
+            Forgot Password?
+        </a>
+    </p>
+
+        <a href="{% url 'signup' %}" class="link">
+            Don’t have an account? <b>Sign Up</b>
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+</html>

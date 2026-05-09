@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skill Gap Analysis</title>
+
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #070b24, #0b0f29, #09121f);
+            font-family: "Poppins", sans-serif;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 45px;
+            font-weight: 900;
+            background: linear-gradient(90deg, #00e1ff, #00b7ff, #0077ff);
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: 2px;
+        }
+
+        .wrapper {
+            width: 50%;
+            margin: 50px auto;
+            background: #12192e;
+            padding: 40px;
+            border-radius: 18px;
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.2);
+        }
+
+        label {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            border-radius: 10px;
+            background: #35446f;
+            border: none;
+            color: #ffffff;
+            font-size: 16px;
+            margin-bottom: 25px;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            font-size: 22px;
+            font-weight: 700;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            background: linear-gradient(90deg, #00eaff, #00bfff, #0099ff);
+            transition: .3s;
+        }
+
+        button:hover {
+            transform: scale(1.04);
+            opacity: 0.9;
+        }
+
+        /* ================= SELECT2 DARK THEME ================= */
+
+        .select2-container {
+            margin-bottom: 35px;   /* ✅ KEY FIX: SPACE BELOW DROPDOWN */
+        }
+
+        .select2-container--default .select2-selection--single {
+            background-color: #35446f;
+            border: none;
+            border-radius: 10px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+        }
+
+        .select2-selection__rendered {
+            color: #ffffff !important;
+            font-size: 16px;
+            padding-left: 12px !important;
+        }
+
+        .select2-selection__arrow {
+            top: 13px !important;
+        }
+
+        .select2-dropdown {
+            background-color: #12192e;
+            border: none;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .select2-results__option {
+            color: #ffffff;
+            padding: 12px;
+            font-size: 15px;
+        }
+
+        .select2-results__option--highlighted {
+            background: linear-gradient(90deg, #00eaff, #00b7ff);
+            color: #001b2e !important;
+        }
+
+        .select2-results__option--selected {
+            background: rgba(0,234,255,0.25);
+            color: #ffffff;
+        }
+
+        /* ================= SKILL CHIPS ================= */
+
+        .skill-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-top: 10px;
+        }
+
+        .skill-chip input {
+            display: none;
+        }
+
+        .skill-chip span {
+            padding: 10px 18px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.06);
+            color: #cfd9ff;
+            font-size: 14px;
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.15);
+            transition: 0.25s;
+        }
+
+        .skill-chip span:hover {
+            background: rgba(0,234,255,0.15);
+            border-color: #00eaff;
+        }
+
+        .skill-chip input:checked + span {
+            background: linear-gradient(90deg, #00eaff, #00b7ff);
+            color: #001b2e;
+            font-weight: 600;
+            box-shadow: 0 0 12px rgba(0,234,255,0.6);
+        }
+
+        @media (max-width: 900px) {
+            .wrapper {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>Skill Gap Analysis</h1>
+
+<div class="wrapper">
+    <form method="POST" enctype="multipart/form-data"
+          action="{% url 'enhanced_skill_gap_analysis' %}">
+        {% csrf_token %}
+
+        <label>Upload Resume (PDF / DOCX)</label>
+        <input type="file" name="resume_file" required>
+
+        <label>Select Job Role</label>
+        <select name="job_role" id="job_role" required>
+            <option></option>
+            <option value="java developer">Java Developer</option>
+            <option value="python developer">Python Developer</option>
+            <option value="sql developer">SQL Developer</option>
+            <option value="data scientist">Data Scientist</option>
+            <option value="data analyst">Data Analyst</option>
+            <option value="aiml engineer">AI/ML Engineer</option>
+            <option value="business analyst">Business Analyst</option>
+            <option value="software developer">Software Developer</option>
+            <option value="cloud engineer">Cloud Engineer</option>
+            <option value="cybersecurity analyst">Cybersecurity Analyst</option>
+            <option value="devops engineer">DevOps Engineer</option>
+            <option value="ui/ux designer">UI/UX Designer</option>
+        </select>
+
+        <label>Additional Skills (Optional)</label>
+
+        <div class="skill-grid">
+            <label class="skill-chip"><input type="checkbox" name="skills" value="java"><span>Java</span></label>
+            <label class="skill-chip"><input type="checkbox" name="skills" value="python"><span>Python</span></label>
+            <label class="skill-chip"><input type="checkbox" name="skills" value="sql"><span>SQL</span></label>
+            <label class="skill-chip"><input type="checkbox" name="skills" value="machine learning"><span>Machine Learning</span></label>
+            <label class="skill-chip"><input type="checkbox" name="skills" value="deep learning"><span>Deep Learning</span></label>
+            <label class="skill-chip"><input type="checkbox" name="skills" value="cloud computing"><span>Cloud Computing</span></label>
+            <label class="skill-chip"><input type="checkbox" name="skills" value="kubernetes"><span>Kubernetes</span></label>
+            <label class="skill-chip"><input type="checkbox" name="skills" value="react"><span>React</span></label>
+            <label class="skill-chip"><input type="checkbox" name="skills" value="nodejs"><span>NodeJS</span></label>
+            <label class="skill-chip"><input type="checkbox" name="skills" value="cybersecurity"><span>Cybersecurity</span></label>
+            <label class="skill-chip"><input type="checkbox" name="skills" value="big data"><span>Big Data</span></label>
+            <label class="skill-chip"><input type="checkbox" name="skills" value="networking"><span>Networking</span></label>
+            <label class="skill-chip"><input type="checkbox" name="skills" value="ai"><span>AI</span></label>
+        </div>
+
+        <br>
+        <button type="submit">Analyze Resume</button>
+    </form>
+</div>
+
+<!-- jQuery + Select2 JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+$(document).ready(function () {
+    $('#job_role').select2({
+        placeholder: "Select job role",
+        width: "100%"
+    });
+});
+</script>
+
+</body>
+</html>

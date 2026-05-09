@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Resume</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(120deg, #132a4f, #4c3780);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 60px;
+            color: #fff;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 1000px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 14px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        form {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        input[type="file"] {
+            padding: 10px;
+            border-radius: 8px;
+            background: #fff;
+            border: none;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: #ffd369;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #ffb703;
+        }
+
+        textarea {
+            width: 100%;
+            height: 350px;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 10px;
+            border: none;
+            background: #ffffff;
+            color: #000;
+            font-size: 14px;
+            font-family: monospace;
+            resize: vertical;
+        }
+
+        .download-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .download-buttons button {
+            width: 100%;
+            background: #4CAF50;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Upload Resume to Enhance</h2>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" name="resume_file" required>
+            <button type="submit">Enhance Resume</button>
+        </form>
+
+        {% if enhanced_resume %}
+            <h2>Enhanced Resume Output</h2>
+            
+            <textarea readonly>{{ enhanced_resume }}</textarea>
+
+            <div class="download-buttons">
+                <form method="POST" action="{% url 'download_resume_pdf' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="resume_text" value="{{ enhanced_resume }}">
+                    <button type="submit">Download as PDF</button>
+                </form>
+
+                <form method="POST" action="{% url 'download_resume_doc' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="resume_text" value="{{ enhanced_resume }}">
+                    <button type="submit">Download as Word</button>
+                </form>
+            </div>
+        {% endif %}
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Resume AI Chat</h2>
+
+<form method="POST">
+    {% csrf_token %}
+    <textarea name="user_prompt" placeholder="Ask about resume tips or questions" rows="5" cols="50"></textarea><br><br>
+    <button type="submit">Ask AI</button>
+</form>
+
+<div style="margin-top: 20px;">
+    {% if response_text %}
+        <h3>AI Response:</h3>
+        <p>{{ response_text }}</p>
+    {% endif %}
+</div>
+{% endblock %}

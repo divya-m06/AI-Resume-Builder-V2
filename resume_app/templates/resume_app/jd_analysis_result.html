@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>JD Keyword Result</title>
+
+<style>
+body{ 
+    background:#07101d; 
+    color:white; 
+    font-family:"Poppins", sans-serif; 
+    padding:40px; 
+}
+h1{
+    font-size:40px;
+    font-weight:800;
+    text-align:center;
+    background:linear-gradient(90deg,#00eaff,#0084ff);
+    -webkit-background-clip:text;
+    color:transparent;
+}
+
+/* Box container */
+.box{
+    padding:25px;
+    background:#11172b;
+    border-radius:14px;
+    margin-bottom:30px;
+    box-shadow:0 0 20px rgba(0,255,255,0.12);
+}
+
+/* Keyword badges */
+.badge{
+    display:inline-block;
+    background:#003b88;
+    padding:10px 16px;
+    border-radius:8px;
+    margin:6px;
+    font-size:15px;
+    font-weight:600;
+}
+
+/* Score display */
+.score{
+    font-size:55px;
+    font-weight:800;
+    color:#00eaff;
+    text-align:center;
+    letter-spacing:2px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>JD Keyword Match Result</h1>
+
+<!-- SCORE -->
+<div class="box">
+    <div class="score">{{ score }}%</div>
+</div>
+
+<!-- MATCHED KEYWORDS -->
+<div class="box">
+    <h2>Matched Keywords</h2>
+    {% for m in matched %}
+        <span class="badge">{{ m }}</span>
+    {% empty %}
+        <p>No keyword matches found</p>
+    {% endfor %}
+</div>
+
+<!-- ⭐ SUGGESTED PROJECTS -->
+<div class="box">
+    <h2 style="font-size:32px; margin-bottom:15px;">🔥 Suggested Interview Projects</h2>
+
+    {% for p in suggested_projects %}
+        <div style="
+            background:#0e1a2f;
+            padding:20px;
+            margin-bottom:18px;
+            border-radius:12px;
+            border:1px solid #163057;
+        ">
+
+            <!-- Project Title -->
+            <h3 style="font-size:26px; font-weight:800; color:#00eaff; margin-bottom:10px;">
+                {{ p.title }}
+            </h3>
+
+            <!-- Description -->
+            <p style="font-size:16px; color:#d4d7ff; line-height:1.6;">
+                {{ p.description }}
+            </p>
+
+            <!-- Tech Stack -->
+            <div style="margin:10px 0;">
+                {% for tech in p.stack %}
+                    <span style="
+                        background:#10233f;
+                        padding:6px 12px;
+                        border-radius:8px;
+                        color:#7ed3ff;
+                        font-size:13px;
+                        margin:4px;
+                        display:inline-block;
+                    ">
+                        {{ tech }}
+                    </span>
+                {% endfor %}
+            </div>
+
+            <!-- Resource Links (FIXED) -->
+            <div style="margin-top:12px;">
+                <a href="{{ p.github }}"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   style="color:#00ffaa; margin-right:15px; font-weight:600; font-size:15px;">
+                   GitHub 🔗
+                </a>
+
+                <a href="{{ p.video }}"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   style="color:#00eaff; margin-right:15px; font-weight:600; font-size:15px;">
+                   Video ▶️
+                </a>
+
+                <a href="{{ p.article }}"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   style="color:#6eb6ff; font-weight:600; font-size:15px;">
+                   Article 📄
+                </a>
+            </div>
+
+        </div>
+    {% empty %}
+        <p>No project suggestions available.</p>
+    {% endfor %}
+</div>
+
+</body>
+</html>
