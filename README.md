@@ -264,30 +264,6 @@ VITE_API_BASE_URL = https://your-render-url.onrender.com
 
 ---
 
-## API Reference
-
-| Method | Endpoint | Auth Required | Description |
-|---|---|---|---|
-| GET | `/health` | No | Health check |
-| POST | `/api/auth/signup` | No | Register a new user |
-| POST | `/api/auth/login` | No | Login and receive JWT token |
-| POST | `/api/resume/download-pdf` | No | Generate and download PDF |
-| POST | `/api/resume/download-docx` | No | Generate and download DOCX |
-| POST | `/api/resume/save` | No | Save resume to database |
-| GET | `/api/my-resumes` | No | List saved resumes by userid |
-| GET | `/api/resume/{id}/pdf` | Yes | Download a saved resume as PDF |
-| DELETE | `/api/resume/{id}` | No | Delete a saved resume |
-| POST | `/api/skill-gap/analyze` | No | Analyze skill gap from uploaded resume |
-| POST | `/api/jd-match` | No | Match resume text against job description |
-
----
-
 ## Screenshots
 
-Add screenshots here.
-
----
-
-## License
-
-This project was built for a hackathon. Feel free to fork and extend.
+Screenshots will be added after deployment.
