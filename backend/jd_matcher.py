@@ -1,14 +1,41 @@
 import re
 
+STOP_WORDS = {
+    "and", "the", "are", "have", "our", "with", "for", "that", "this",
+    "you", "your", "will", "was", "were", "been", "being", "they",
+    "their", "them", "from", "into", "about", "which", "when", "who",
+    "how", "what", "where", "should", "would", "could", "must", "may",
+    "can", "not", "but", "also", "all", "any", "each", "both", "few",
+    "more", "most", "other", "some", "such", "than", "too", "very",
+    "just", "like", "well", "own", "same", "so", "do", "did", "does",
+    "its", "it", "is", "in", "on", "at", "to", "of", "a", "an", "as",
+    "be", "by", "or", "if", "we", "us", "me", "my", "he", "she", "his",
+    "her", "up", "out", "no", "go", "new", "get", "use", "look", "only",
+    "over", "think", "also", "back", "after", "work", "first", "well",
+    "way", "even", "want", "because", "these", "give", "most", "write",
+    "need", "required", "responsibilities", "ideal", "candidate",
+    "looking", "preferred", "understand", "understanding", "develop",
+    "collaborate", "maintain", "optimize", "participate", "join",
+    "reviews", "review", "clean", "efficient", "motivated", "passion",
+    "speed", "scalability", "scalable", "software", "systems", "team",
+    "testing", "tools", "knowledge", "familiarity", "problem", "solving",
+    "code", "designers", "developers", "engineer", "intern", "node",
+    "html", "have", "build", "building", "applications"
+}
+
 def analyze_jd(jd_text, resume_text):
     """
     Analyze job description against resume and return keyword match results.
     Returns score, matched keywords, missing keywords, and suggestion.
     """
 
-    # Extract keywords from JD and resume
-    jd_keywords = set(re.findall(r'\b[a-zA-Z]{3,}\b', jd_text.lower()))
-    resume_keywords = set(re.findall(r'\b[a-zA-Z]{3,}\b', resume_text.lower()))
+    # Extract keywords — filter out stop words and short words
+    def extract_keywords(text):
+        words = re.findall(r'\b[a-zA-Z]{3,}\b', text.lower())
+        return {w for w in words if w not in STOP_WORDS}
+
+    jd_keywords = extract_keywords(jd_text)
+    resume_keywords = extract_keywords(resume_text)
 
     matched_keywords = sorted(list(jd_keywords & resume_keywords))
     missing_keywords = sorted(list(jd_keywords - resume_keywords))
