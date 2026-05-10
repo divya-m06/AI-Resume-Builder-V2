@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
-import api from '../services/api'
+import { getStoredUser, saveResume } from '../services/api'
 
 export default function ResumeBuilder() {
+  const [fullName, setFullName] = useState("")
+  const [email, setEmail] = useState("")
+  const [phone, setPhone] = useState("")
   const [formData, setFormData] = useState({
-    full_name: "",
-    email: "",
-    phone: "",
     job_role: "",
     education: "",
     experience: "",
@@ -26,22 +26,42 @@ export default function ResumeBuilder() {
   }
 
   const handleDownload = async (format) => {
-    if (!formData.full_name || !formData.job_role || !formData.skills) {
+    if (!fullName || !formData.job_role || !formData.skills) {
       setError("Please fill in at least your name, job role, and skills.")
       return
     }
     setLoading(true)
     setError(null)
     try {
+      const skillsArray = formData.skills.split(",").map((s) => s.trim()).filter(Boolean)
+      const downloadPayload = {
+        ...formData,
+        full_name: fullName,
+        email,
+        phone,
+        skills: skillsArray,
+      }
+
+      const user = getStoredUser()
+      if (user) {
+        try {
+          await saveResume({
+            userid: user.userid,
+            full_name: fullName,
+            job_title: formData.job_role,
+            resume_data: downloadPayload,
+          })
+        } catch {
+          /* ignore save failures — still download */
+        }
+      }
+
       const response = await fetch(
         `${import.meta.env.VITE_API_BASE_URL}/api/resume/download-${format}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            ...formData,
-            skills: formData.skills.split(",").map(s => s.trim()).filter(Boolean)
-          })
+          body: JSON.stringify(downloadPayload)
         }
       )
       if (!response.ok) throw new Error("Failed to generate resume")
@@ -49,7 +69,7 @@ export default function ResumeBuilder() {
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement("a")
       a.href = url
-      a.download = `resume_${formData.full_name.replace(" ", "_")}.${format === "pdf" ? "pdf" : "docx"}`
+      a.download = `resume_${fullName.replace(" ", "_")}.${format === "pdf" ? "pdf" : "docx"}`
       a.click()
       window.URL.revokeObjectURL(url)
     } catch (err) {
@@ -130,8 +150,9 @@ export default function ResumeBuilder() {
                 </label>
                 <input
                   type="text"
-                  value={formData.full_name}
-                  onChange={(e) => handleInputChange('full_name', e.target.value)}
+                  autoComplete="name"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
                   style={{
                     width: "100%",
                     padding: "12px 16px",
@@ -159,8 +180,9 @@ export default function ResumeBuilder() {
                 </label>
                 <input
                   type="email"
-                  value={formData.email}
-                  onChange={(e) => handleInputChange('email', e.target.value)}
+                  autoComplete="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   style={{
                     width: "100%",
                     padding: "12px 16px",
@@ -188,8 +210,9 @@ export default function ResumeBuilder() {
                 </label>
                 <input
                   type="tel"
-                  value={formData.phone}
-                  onChange={(e) => handleInputChange('phone', e.target.value)}
+                  autoComplete="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
                   style={{
                     width: "100%",
                     padding: "12px 16px",

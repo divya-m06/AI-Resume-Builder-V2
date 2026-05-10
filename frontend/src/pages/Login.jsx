@@ -1,8 +1,10 @@
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import { supabase } from "../lib/supabaseClient"
+import { loginUser, signupUser } from "../services/api"
+import { useAuth } from "../hooks/useAuth"
 
 export default function Login() {
+  const { setUser } = useAuth()
   const [activeTab, setActiveTab] = useState("signin")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
@@ -23,46 +25,19 @@ export default function Login() {
     password: ""
   })
 
-  const handleGoogleSignIn = async () => {
-    if (!supabase || !supabase.auth) {
-      setError("Authentication service not configured")
-      return
-    }
-
-    try {
-      await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: { redirectTo: window.location.origin + "/dashboard" }
-      })
-    } catch (error) {
-      setError("Failed to sign in with Google")
-    }
-  }
-
   const handleSignIn = async (e) => {
     e.preventDefault()
     setLoading(true)
     setError("")
 
     try {
-      const response = await fetch("http://localhost:8000/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(signinForm)
-      })
-
-      const data = await response.json()
-
-      if (response.ok) {
-        localStorage.setItem("user", JSON.stringify(data.user))
+      const data = await loginUser(signinForm.userid, signinForm.password)
+      if (data?.user) {
+        setUser(data.user)
         navigate("/dashboard")
-      } else {
-        setError(data.detail || "Login failed")
       }
-    } catch (error) {
-      setError("Network error. Please try again.")
+    } catch (err) {
+      setError(err?.message || "Network error. Please try again.")
     } finally {
       setLoading(false)
     }
@@ -75,31 +50,18 @@ export default function Login() {
     setSuccess("")
 
     try {
-      const response = await fetch("http://localhost:8000/api/auth/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(signupForm)
+      await signupUser(signupForm)
+      setSuccess("Account created successfully! Please sign in.")
+      setActiveTab("signin")
+      setSignupForm({
+        name: "",
+        email: "",
+        userid: "",
+        phone: "",
+        password: ""
       })
-
-      const data = await response.json()
-
-      if (response.ok) {
-        setSuccess("Account created successfully! Please sign in.")
-        setActiveTab("signin")
-        setSignupForm({
-          name: "",
-          email: "",
-          userid: "",
-          phone: "",
-          password: ""
-        })
-      } else {
-        setError(data.detail || "Signup failed")
-      }
-    } catch (error) {
-      setError("Network error. Please try again.")
+    } catch (err) {
+      setError(err?.message || "Network error. Please try again.")
     } finally {
       setLoading(false)
     }
@@ -160,11 +122,11 @@ export default function Login() {
 
         {/* Google Sign In Button */}
         <button
-          onClick={handleGoogleSignIn}
-          disabled={!supabase || !supabase.auth}
+          type="button"
+          disabled
           style={{
             width: "100%",
-            background: (!supabase || !supabase.auth) ? "#ccc" : "var(--brand-olive)",
+            background: "#ccc",
             color: "white",
             borderRadius: "40px",
             padding: "13px",
@@ -172,7 +134,7 @@ export default function Login() {
             fontWeight: "600",
             fontFamily: "Montserrat, sans-serif",
             border: "none",
-            cursor: (!supabase || !supabase.auth) ? "not-allowed" : "pointer",
+            cursor: "not-allowed",
             marginBottom: "24px"
           }}
         >

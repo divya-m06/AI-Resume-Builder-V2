@@ -24,7 +24,7 @@ export default function Dashboard() {
           color: "var(--brand-cream)",
           marginBottom: "8px"
         }} className="dashboard-heading">
-          {user ? `Welcome, ${user.email?.split('@')[0] || 'User'}` : 'Welcome Back'}
+          {user ? `Welcome, ${(user.email?.split("@")[0]) || user.userid || user.name || "User"}` : "Welcome Back"}
         </h1>
         <p style={{
           fontSize: "16px",

@@ -6,28 +6,24 @@ import jwt
 import os
 from dotenv import load_dotenv
 from typing import Optional
+import json
 import io
 from supabase import create_client, Client
 
-# Load environment variables
-load_dotenv()
+load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env"))
 
-# Initialize Supabase client
-try:
-    supabase_url = os.getenv("SUPABASE_URL")
-    supabase_key = os.getenv("SUPABASE_KEY")
+supabase_url = os.getenv("SUPABASE_URL")
+supabase_key = os.getenv("SUPABASE_KEY")
 
-    if supabase_url and supabase_key and supabase_url != "placeholder" and supabase_key != "placeholder":
-        supabase: Client = create_client(supabase_url, supabase_key)
-        supabase_available = True
-    else:
-        supabase = None
-        supabase_available = False
-        print("Warning: Supabase credentials not configured. Auth endpoints will return errors.")
-except Exception as e:
-    supabase = None
-    supabase_available = False
-    print(f"Warning: Failed to initialize Supabase client: {e}")
+print(f"DEBUG: SUPABASE_URL = {supabase_url}")
+print(f"DEBUG: SUPABASE_KEY = {supabase_key[:10] if supabase_key else None}")
+
+if not supabase_url or not supabase_key:
+    raise RuntimeError("SUPABASE_URL and SUPABASE_KEY must be set in .env")
+
+supabase: Client = create_client(supabase_url, supabase_key)
+supabase_available = True
+print("Supabase connected successfully")
 
 # Initialize FastAPI app
 app = FastAPI(title="AI Resume Builder API")
@@ -131,6 +127,48 @@ async def login(credentials: dict):
             raise e
         raise HTTPException(500, "Internal server error")
 
+def _fetch_user_resumes(user: dict):
+    user_id = user.get("sub")
+    if not supabase_available or not user_id:
+        return {"resumes": []}
+    try:
+        result = (
+            supabase.table("resumes")
+            .select("id, full_name, job_title, created_at")
+            .eq("user_id", user_id)
+            .order("created_at", desc=True)
+            .execute()
+        )
+        return {"resumes": result.data or []}
+    except Exception as e:
+        print(f"List resumes: {e}")
+        return {"resumes": []}
+
+
+@app.post("/api/resume/save")
+async def save_resume(data: dict):
+    if not supabase_available:
+        return {"ok": False}
+    try:
+        userid = data.get("userid")
+        if not userid:
+            return {"ok": False}
+        user = supabase.table("users").select("id").eq("userid", userid).execute()
+        if not user.data:
+            return {"ok": False}
+        user_id = user.data[0]["id"]
+        supabase.table("resumes").insert({
+            "user_id": user_id,
+            "full_name": data.get("full_name"),
+            "job_title": data.get("job_title"),
+            "resume_data": data.get("resume_data")
+        }).execute()
+        return {"ok": True}
+    except Exception as e:
+        print(f"Save resume error: {e}")
+        return {"ok": False}
+
+
 @app.post("/api/resume/create")
 async def create_resume(
     full_name: str = Form(...),
@@ -144,7 +182,6 @@ async def create_resume(
     previous_company: str = Form(...),
     user=Depends(require_user)
 ):
-    # For now, just return the data - we'll implement storage later
     resume_data = {
         "full_name": full_name,
         "email": email,
@@ -156,7 +193,76 @@ async def create_resume(
         "projects": projects,
         "previous_company": previous_company
     }
-    return {"message": "Resume created successfully", "data": resume_data}
+    saved_id = None
+    uid = user.get("sub")
+    if supabase_available and uid:
+        try:
+            row = {
+                "user_id": uid,
+                "full_name": full_name,
+                "job_title": job_role,
+                "resume_data": resume_data,
+            }
+            ins = supabase.table("resumes").insert(row).execute()
+            if ins.data:
+                saved_id = ins.data[0].get("id")
+        except Exception as e:
+            print(f"Resume persist skipped: {e}")
+    return {"message": "Resume created successfully", "data": resume_data, "id": saved_id}
+
+
+@app.get("/api/resume/{resume_id}/pdf")
+async def download_saved_resume_pdf(resume_id: str, user=Depends(require_user)):
+    user_id = user.get("sub")
+    if not supabase_available or not user_id:
+        raise HTTPException(status_code=503, detail="Resume storage is not configured")
+
+    try:
+        rows = (
+            supabase.table("resumes")
+            .select("resume_data")
+            .eq("id", resume_id)
+            .eq("user_id", user_id)
+            .execute()
+        )
+        if not rows.data:
+            raise HTTPException(status_code=404, detail="Resume not found")
+        raw = rows.data[0]["resume_data"]
+        resume_blob = json.loads(raw) if isinstance(raw, str) else raw
+        pdf_bytes = generate_pdf(resume_blob)
+        return StreamingResponse(
+            io.BytesIO(pdf_bytes),
+            media_type="application/pdf",
+            headers={"Content-Disposition": f'attachment; filename="resume_{resume_id}.pdf"'},
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.delete("/api/resume/{resume_id}")
+async def delete_saved_resume(resume_id: str, user=Depends(require_user)):
+    user_id = user.get("sub")
+    if not supabase_available or not user_id:
+        raise HTTPException(status_code=503, detail="Resume storage is not configured")
+
+    try:
+        rows = (
+            supabase.table("resumes")
+            .select("id")
+            .eq("id", resume_id)
+            .eq("user_id", user_id)
+            .execute()
+        )
+        if not rows.data:
+            raise HTTPException(status_code=404, detail="Resume not found")
+        supabase.table("resumes").delete().eq("id", resume_id).eq("user_id", user_id).execute()
+        return {"ok": True}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/resume/download-pdf")
 async def download_resume_pdf(resume_data: dict):
@@ -212,7 +318,28 @@ async def jd_match_analyze(data: dict):
     result = analyze_jd(jd_text, resume_text)
     return result
 
+@app.get("/api/my-resumes")
+async def list_my_resumes(userid: Optional[str] = None):
+    if not userid or not supabase_available:
+        return {"resumes": []}
+    try:
+        user = supabase.table("users").select("id").eq("userid", userid).execute()
+        if not user.data:
+            return {"resumes": []}
+        user_id = user.data[0]["id"]
+        result = (
+            supabase.table("resumes")
+            .select("id, full_name, job_title, created_at")
+            .eq("user_id", user_id)
+            .order("created_at", desc=True)
+            .execute()
+        )
+        return {"resumes": result.data or []}
+    except Exception as e:
+        print(f"List resumes error: {e}")
+        return {"resumes": []}
+
+
 @app.get("/api/resumes/me")
 async def get_user_resumes(user=Depends(require_user)):
-    # For now, return empty list - we'll implement storage later
-    return {"resumes": []}
+    return _fetch_user_resumes(user)

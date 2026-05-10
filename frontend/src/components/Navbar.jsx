@@ -1,10 +1,10 @@
 import { Link, useNavigate } from "react-router-dom"
 import { useState, useEffect, useRef } from "react"
-import { supabase } from "../lib/supabaseClient"
 import { useAuth } from "../hooks/useAuth"
+import { getStoredUser, logoutUser } from "../services/api"
 
 export default function Navbar({ page = "landing" }) {
-  const { user } = useAuth()
+  const { user, setUser } = useAuth()
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const dropdownRef = useRef(null)
   const navigate = useNavigate()
@@ -20,10 +20,14 @@ export default function Navbar({ page = "landing" }) {
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [])
 
-  const handleSignOut = async () => {
-    await supabase.auth.signOut()
+  const handleSignOut = () => {
+    logoutUser()
+    setUser(null)
     navigate("/")
   }
+
+  const sessionUser = user ?? getStoredUser()
+  const isLoggedIn = Boolean(sessionUser)
 
   const logoLink = page === "landing" ? "/" : "/dashboard"
 
@@ -146,7 +150,7 @@ export default function Navbar({ page = "landing" }) {
               JD Matcher
             </Link>
 
-            {user ? (
+            {isLoggedIn ? (
               <div style={{ position: "relative" }} ref={dropdownRef}>
                 <button
                   onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -166,7 +170,7 @@ export default function Navbar({ page = "landing" }) {
                     fontFamily: "Montserrat, sans-serif"
                   }}
                 >
-                  {user.email?.charAt(0).toUpperCase()}
+                  {(sessionUser?.email || sessionUser?.userid || sessionUser?.name || "?").charAt(0).toUpperCase()}
                 </button>
 
                 {dropdownOpen && (

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Navbar from '../components/Navbar'
 import { analyzeJD } from '../services/api'
 
 export default function JDMatcher() {
@@ -20,7 +21,7 @@ export default function JDMatcher() {
       const data = await analyzeJD(jdText, resumeText)
       setResult(data)
     } catch (err) {
-      setError("Something went wrong. Make sure the backend is running.")
+      setError(err?.message || "Something went wrong. Make sure the backend is running.")
     } finally {
       setLoading(false)
     }
@@ -28,19 +29,21 @@ export default function JDMatcher() {
 
   return (
     <div>
-      {/* Header */}
+      <Navbar page="app" />
+
+      {/* Header Bar */}
       <header style={{
         background: "var(--brand-charcoal)",
         padding: "52px 40px",
         paddingTop: "72px",
         textAlign: "center"
-      }}>
+      }} className="skill-gap-header">
         <h1 style={{
           fontSize: "34px",
           fontWeight: "800",
           color: "var(--brand-cream)",
           marginBottom: "8px"
-        }}>
+        }} className="skill-gap-heading">
           JD Keyword Matcher
         </h1>
         <p style={{
@@ -69,6 +72,7 @@ export default function JDMatcher() {
             padding: "28px 32px",
             marginBottom: "24px"
           }}>
+            <form onSubmit={(e) => e.preventDefault()} style={{ margin: 0 }}>
             <div style={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
@@ -145,6 +149,7 @@ export default function JDMatcher() {
             {/* Analyze Button */}
             <div style={{ textAlign: "center" }}>
               <button
+                type="button"
                 onClick={handleAnalyze}
                 disabled={loading || !jdText.trim() || !resumeText.trim()}
                 style={{
@@ -162,6 +167,7 @@ export default function JDMatcher() {
                 {loading ? "Analyzing..." : "Analyze Match"}
               </button>
             </div>
+            </form>
           </div>
 
           {/* Error Message */}
