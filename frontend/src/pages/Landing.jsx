@@ -1,59 +1,10 @@
 import { Link } from "react-router-dom"
+import Navbar from "../components/Navbar"
 
 export default function Landing() {
   return (
     <div style={{ fontFamily: "Montserrat, sans-serif" }}>
-      {/* Simple Navbar for now */}
-      <nav style={{
-        background: "var(--brand-charcoal)",
-        padding: "16px 40px",
-        position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 1000
-      }}>
-        <div style={{
-          maxWidth: "1200px",
-          margin: "0 auto",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center"
-        }}>
-          <div style={{
-            fontSize: "24px",
-            fontWeight: "800",
-            color: "var(--brand-olive)"
-          }}>
-            AI Resume Builder
-          </div>
-          <div style={{ display: "flex", gap: "20px" }}>
-            <Link
-              to="/login"
-              style={{
-                color: "var(--brand-cream)",
-                textDecoration: "none",
-                fontWeight: "600"
-              }}
-            >
-              Login
-            </Link>
-            <Link
-              to="/login"
-              style={{
-                background: "var(--brand-olive)",
-                color: "white",
-                padding: "8px 16px",
-                borderRadius: "20px",
-                textDecoration: "none",
-                fontWeight: "600"
-              }}
-            >
-              Sign Up
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <Navbar page="landing" />
 
       {/* Hero Section */}
       <section style={{

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { Link, Navigate } from "react-router-dom"
 import Navbar from "../components/Navbar"
 import { useAuth } from "../hooks/useAuth"
-import { deleteResume, downloadResumePDF, getMyResumes, getStoredUser } from "../services/api"
+import { apiFetch, downloadResumePDF, getMyResumes, getStoredUser } from "../services/api"
 
 function formatResumeDate(iso) {
   if (!iso) return ""
@@ -76,13 +76,15 @@ export default function MyResumes() {
   }
 
   const handleDelete = async (id) => {
-    setActionError(null)
     setDeletingId(id)
     try {
-      await deleteResume(id)
-      setResumes((prev) => prev.filter((r) => String(r.id) !== String(id)))
-    } catch (e) {
-      setActionError(e?.message || "Could not delete resume.")
+      const user = getStoredUser();
+      await apiFetch(`/api/resume/${id}?userid=${user?.userid}`, {
+        method: "DELETE"
+      });
+      setResumes(prev => prev.filter(r => r.id !== id));
+    } catch (err) {
+      console.error("Delete failed:", err);
     } finally {
       setDeletingId(null)
     }

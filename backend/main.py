@@ -242,26 +242,20 @@ async def download_saved_resume_pdf(resume_id: str, user=Depends(require_user)):
 
 
 @app.delete("/api/resume/{resume_id}")
-async def delete_saved_resume(resume_id: str, user=Depends(require_user)):
-    user_id = user.get("sub")
-    if not supabase_available or not user_id:
-        raise HTTPException(status_code=503, detail="Resume storage is not configured")
-
+async def delete_saved_resume(resume_id: str, userid: str = None):
+    if not supabase_available or not userid:
+        raise HTTPException(status_code=400, detail="userid required")
     try:
-        rows = (
-            supabase.table("resumes")
-            .select("id")
-            .eq("id", resume_id)
-            .eq("user_id", user_id)
-            .execute()
-        )
-        if not rows.data:
-            raise HTTPException(status_code=404, detail="Resume not found")
+        user = supabase.table("users").select("id").eq("userid", userid).execute()
+        if not user.data:
+            raise HTTPException(status_code=404, detail="User not found")
+        user_id = user.data[0]["id"]
         supabase.table("resumes").delete().eq("id", resume_id).eq("user_id", user_id).execute()
         return {"ok": True}
     except HTTPException:
         raise
     except Exception as e:
+        print(f"Delete resume error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/resume/download-pdf")

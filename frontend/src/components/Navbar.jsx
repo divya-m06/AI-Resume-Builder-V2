@@ -76,7 +76,7 @@ export default function Navbar({ page = "landing" }) {
                 padding: "0 16px"
               }}
             >
-              Login
+              Sign In
             </Link>
             <Link
               to="/login"
