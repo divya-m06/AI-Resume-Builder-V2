@@ -1,0 +1,17 @@
+[33ma5e773b[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{0}: reset: moving to HEAD~1
+[33m0380e44[m HEAD@{1}: commit: update: resume builder improvements and deployment setup
+[33ma5e773b[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{2}: commit: docs: add README
+[33m989f9c2[m HEAD@{3}: commit: docs: add README
+[33m606357c[m HEAD@{4}: commit: fix: JD matcher stop words filter
+[33m180ff5b[m HEAD@{5}: commit: pre-deploy: security fixes, JWT auth, bcrypt, render/vercel config
+[33mbcceca0[m HEAD@{6}: commit: feat: delete resume, auth fixes, cleanup
+[33m0e0d7fd[m HEAD@{7}: commit: feat: auth fix, save resume, JD matcher fix
+[33m931abf6[m HEAD@{8}: commit: feat: auth fix, save resume, JD matcher fix
+[33m58364b8[m HEAD@{9}: filter-branch: rewrite
+[33mbb736c9[m HEAD@{10}: commit: fix: remove venv permanently
+[33m727079e[m HEAD@{11}: commit: hi
+[33m00ff1e3[m HEAD@{12}: commit: fix: remove venv from tracking
+[33m884c2bd[m HEAD@{13}: commit: fixes final
+[33m5b09678[m HEAD@{14}: commit: fix: remove venv from tracking, update gitignore
+[33m895e81f[m HEAD@{15}: commit: fixes final
+[33meb5cd9d[m HEAD@{16}: clone: from https://github.com/divya-m06/AI-Resume-Builder-V2.git

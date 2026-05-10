@@ -93,3 +93,37 @@ def generate_learning_roadmap(job_role, missing_skills, experience_level="beginn
                 ]
             }
         ]
+
+def generate_cover_letter(data):
+    """
+    Generate a tailored cover letter using Groq API.
+    data: {full_name, job_title, skills, work_experience, company_name}
+    """
+    try:
+        client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+        
+        company = data.get("company_name", "the company")
+        prompt = f"""
+        Generate a professional and compelling cover letter for:
+        Name: {data.get('full_name')}
+        Target Job: {data.get('job_title')}
+        At Company: {company}
+        Skills: {', '.join(data.get('skills', [])) if isinstance(data.get('skills'), list) else data.get('skills')}
+        Work Experience: {data.get('work_experience')}
+
+        The letter should be tailored to the job and highlight how the skills and experience make the candidate a great fit.
+        Keep it professional, concise, and persuasive.
+        Return ONLY the text of the cover letter.
+        """
+
+        response = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.7,
+            max_tokens=1500
+        )
+
+        return response.choices[0].message.content.strip()
+    except Exception as e:
+        print(f"Error generating cover letter: {e}")
+        return "Dear Hiring Manager,\n\nI am writing to express my strong interest in the job. I believe my skills and experience make me a great candidate for this role.\n\nBest regards,\nCandidate"

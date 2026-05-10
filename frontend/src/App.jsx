@@ -6,6 +6,8 @@ import ResumeBuilder from "./pages/ResumeBuilder"
 import SkillGap from "./pages/SkillGap"
 import JDMatcher from "./pages/JDMatcher"
 import MyResumes from "./pages/MyResumes"
+import CoverLetter from "./pages/CoverLetter"
+import Profile from "./pages/Profile"
 
 export default function App() {
   return (
@@ -17,6 +19,8 @@ export default function App() {
       <Route path="/skill-gap" element={<SkillGap />} />
       <Route path="/jd-matcher" element={<JDMatcher />} />
       <Route path="/my-resumes" element={<MyResumes />} />
+      <Route path="/cover-letter" element={<CoverLetter />} />
+      <Route path="/profile" element={<Profile />} />
     </Routes>
   )
 }

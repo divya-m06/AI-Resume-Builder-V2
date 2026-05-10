@@ -356,9 +356,9 @@ export default function Landing() {
                 badge: "PERSONALIZED"
               },
               {
-                title: "Project Suggestions",
-                description: "Get project ideas matched to the job description to build your portfolio.",
-                badge: "CURATED"
+                title: "Cover Letter Generator",
+                description: "Generate a tailored cover letter for any job in seconds. Copy or download as PDF.",
+                badge: "AI GENERATED"
               },
               {
                 title: "Interview Prep",

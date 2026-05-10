@@ -68,7 +68,7 @@ def require_user(user=Depends(get_optional_user)):
 from skill_gap import analyze_skill_gap
 from jd_matcher import analyze_jd
 from resume_engine import generate_pdf, generate_docx
-from llm_service import generate_learning_roadmap
+from llm_service import generate_learning_roadmap, generate_cover_letter
 
 # Routes
 @app.get("/health")
@@ -373,6 +373,23 @@ async def jd_match_analyze(data: dict):
 
     result = analyze_jd(jd_text, resume_text)
     return result
+
+@app.post("/api/cover-letter/generate")
+async def cover_letter_generate(data: dict):
+    try:
+        # Validate required fields
+        required = ["full_name", "job_title", "skills", "work_experience"]
+        for field in required:
+            if field not in data:
+                raise HTTPException(400, f"Field '{field}' is required")
+        
+        cover_letter = generate_cover_letter(data)
+        return {"cover_letter": cover_letter}
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        print(f"Cover letter generation error: {e}")
+        raise HTTPException(500, "Failed to generate cover letter")
 
 @app.get("/api/my-resumes")
 async def list_my_resumes(userid: Optional[str] = None):

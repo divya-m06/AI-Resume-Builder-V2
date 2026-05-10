@@ -46,8 +46,9 @@ export default function Dashboard() {
         }}>
           {/* Feature Cards Grid */}
           <div style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+            display: "flex",
+            flexWrap: "wrap",
+            justifyContent: "center",
             gap: "24px",
             marginBottom: "60px"
           }} className="feature-cards-grid">
@@ -60,7 +61,9 @@ export default function Dashboard() {
               padding: "36px",
               display: "flex",
               flexDirection: "column",
-              gap: "16px"
+              gap: "16px",
+              width: "calc(33.333% - 16px)",
+              minWidth: "300px"
             }} className="feature-card">
               <div style={{
                 fontSize: "10px",
@@ -119,7 +122,9 @@ export default function Dashboard() {
               padding: "36px",
               display: "flex",
               flexDirection: "column",
-              gap: "16px"
+              gap: "16px",
+              width: "calc(33.333% - 16px)",
+              minWidth: "300px"
             }} className="feature-card">
               <div style={{
                 fontSize: "10px",
@@ -178,7 +183,9 @@ export default function Dashboard() {
               padding: "36px",
               display: "flex",
               flexDirection: "column",
-              gap: "16px"
+              gap: "16px",
+              width: "calc(33.333% - 16px)",
+              minWidth: "300px"
             }} className="feature-card">
               <div style={{
                 fontSize: "10px",
@@ -228,6 +235,67 @@ export default function Dashboard() {
               </Link>
             </div>
 
+            {/* Cover Letter Card */}
+            <div style={{
+              background: "white",
+              borderRadius: "16px",
+              border: "1px solid #ebebeb",
+              boxShadow: "0 2px 12px rgba(0,0,0,0.04)",
+              padding: "36px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "16px",
+              width: "calc(33.333% - 16px)",
+              minWidth: "300px"
+            }} className="feature-card">
+              <div style={{
+                fontSize: "10px",
+                fontWeight: "700",
+                textTransform: "uppercase",
+                letterSpacing: "0.08em",
+                color: "var(--brand-olive)",
+                background: "rgba(125,155,118,0.1)",
+                padding: "3px 10px",
+                borderRadius: "20px",
+                alignSelf: "flex-start"
+              }}>
+                AI POWERED
+              </div>
+              <h3 style={{
+                fontSize: "22px",
+                fontWeight: "800",
+                color: "var(--brand-charcoal)",
+                margin: 0
+              }}>
+                Generate Cover Letter
+              </h3>
+              <p style={{
+                fontSize: "14px",
+                color: "#666",
+                lineHeight: "1.7",
+                margin: 0,
+                flex: 1
+              }}>
+                Create personalized cover letters tailored to specific job applications. Highlight your skills and experience.
+              </p>
+              <Link
+                to="/cover-letter"
+                style={{
+                  background: "var(--brand-olive)",
+                  color: "white",
+                  borderRadius: "40px",
+                  padding: "12px 28px",
+                  fontWeight: "600",
+                  fontSize: "15px",
+                  textDecoration: "none",
+                  display: "inline-block",
+                  alignSelf: "flex-start"
+                }}
+              >
+                Create Letter
+              </Link>
+            </div>
+
             {/* My Resumes Card */}
             <div style={{
               background: "white",
@@ -237,7 +305,9 @@ export default function Dashboard() {
               padding: "36px",
               display: "flex",
               flexDirection: "column",
-              gap: "16px"
+              gap: "16px",
+              width: "calc(33.333% - 16px)",
+              minWidth: "300px"
             }} className="feature-card">
               <div style={{
                 fontSize: "10px",
@@ -516,7 +586,7 @@ export default function Dashboard() {
                 color: "var(--brand-olive)",
                 marginBottom: "4px"
               }}>
-                3-in-1
+                4-in-1
               </div>
               <div style={{
                 fontSize: "13px",
@@ -529,7 +599,7 @@ export default function Dashboard() {
                 color: "#aaa",
                 marginTop: "2px"
               }}>
-                Resume Builder, Skill Gap Analyzer, JD Matcher
+                Resume Builder, Skill Gap Analyzer, JD Matcher, Cover Letter
               </div>
             </div>
           </section>

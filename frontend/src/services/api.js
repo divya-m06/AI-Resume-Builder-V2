@@ -126,4 +126,11 @@ export const analyzeJD = (jdText, resumeText) =>
     body: JSON.stringify({ jd_text: jdText, resume_text: resumeText }),
   })
 
+export async function generateCoverLetter(data) {
+  return apiFetch("/api/cover-letter/generate", {
+    method: "POST",
+    body: JSON.stringify(data)
+  })
+}
+
 export default api

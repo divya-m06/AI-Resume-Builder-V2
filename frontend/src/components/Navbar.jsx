@@ -1,8 +1,7 @@
 import { Link, useNavigate } from "react-router-dom"
 import { useState, useEffect, useRef } from "react"
 import { useAuth } from "../hooks/useAuth"
-import { getStoredUser, logoutUser } from "../services/api"
-
+import { getStoredUser, clearAuth } from "../hooks/useAuth"
 export default function Navbar({ page = "landing" }) {
   const { user, setUser } = useAuth()
   const [dropdownOpen, setDropdownOpen] = useState(false)
@@ -21,10 +20,10 @@ export default function Navbar({ page = "landing" }) {
   }, [])
 
   const handleSignOut = () => {
-    logoutUser()
-    setUser(null)
-    navigate("/")
-  }
+  clearAuth()
+  setUser(null)
+  navigate("/")
+}
 
   const sessionUser = user ?? getStoredUser()
   const isLoggedIn = Boolean(sessionUser)
@@ -36,8 +35,8 @@ export default function Navbar({ page = "landing" }) {
       position: "fixed",
       top: 0,
       left: 0,
-      right: 0,
-      zIndex: 50,
+      width: "100%",
+      zIndex: 1000,
       background: "rgba(20, 20, 20, 0.85)",
       backdropFilter: "blur(12px)",
       WebkitBackdropFilter: "blur(12px)",
@@ -52,7 +51,7 @@ export default function Navbar({ page = "landing" }) {
         to={logoLink}
         style={{
           color: "white",
-          fontWeight: 800,
+          fontWeight: 700,
           fontSize: "20px",
           textDecoration: "none",
           fontFamily: "Montserrat, sans-serif"
@@ -62,103 +61,58 @@ export default function Navbar({ page = "landing" }) {
       </Link>
 
       {/* Right side navigation */}
-      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "2rem" }}>
         {page === "landing" ? (
           <>
             <Link
               to="/login"
-              style={{
-                color: "var(--brand-cream)",
-                fontWeight: 500,
-                fontSize: "15px",
-                textDecoration: "none",
-                fontFamily: "Montserrat, sans-serif",
-                padding: "0 16px"
-              }}
+              className="nav-btn"
+              style={{ color: '#f5f5e9', letterSpacing: '0.01em' }}
             >
               Sign In
-            </Link>
-            <Link
-              to="/login"
-              style={{
-                background: "var(--brand-olive)",
-                color: "white",
-                borderRadius: "40px",
-                padding: "9px 26px",
-                fontWeight: 600,
-                textDecoration: "none",
-                fontFamily: "Montserrat, sans-serif",
-                border: "none",
-                cursor: "pointer"
-              }}
-            >
-              Get Started
             </Link>
           </>
         ) : (
           <>
             <Link
               to="/dashboard"
-              style={{
-                color: "var(--brand-cream)",
-                fontWeight: 500,
-                fontSize: "15px",
-                textDecoration: "none",
-                fontFamily: "Montserrat, sans-serif",
-                padding: "0 16px"
-              }}
+              className="nav-link"
+              style={{ color: '#f5f5e9', letterSpacing: '0.01em' }}
             >
               Dashboard
             </Link>
             <Link
               to="/resume-builder"
-              style={{
-                color: "var(--brand-cream)",
-                fontWeight: 500,
-                fontSize: "15px",
-                textDecoration: "none",
-                fontFamily: "Montserrat, sans-serif",
-                padding: "0 16px"
-              }}
+              className="nav-link"
+              style={{ color: '#f5f5e9', letterSpacing: '0.01em' }}
             >
               Resume Builder
             </Link>
             <Link
               to="/skill-gap"
-              style={{
-                color: "var(--brand-cream)",
-                fontWeight: 500,
-                fontSize: "15px",
-                textDecoration: "none",
-                fontFamily: "Montserrat, sans-serif",
-                padding: "0 16px"
-              }}
+              className="nav-link"
+              style={{ color: '#f5f5e9', letterSpacing: '0.01em' }}
             >
               Skill Gap
             </Link>
             <Link
               to="/jd-matcher"
-              style={{
-                color: "var(--brand-cream)",
-                fontWeight: 500,
-                fontSize: "15px",
-                textDecoration: "none",
-                fontFamily: "Montserrat, sans-serif",
-                padding: "0 16px"
-              }}
+              className="nav-link"
+              style={{ color: '#f5f5e9', letterSpacing: '0.01em' }}
             >
               JD Matcher
             </Link>
             <Link
+              to="/cover-letter"
+              className="nav-link"
+              style={{ color: '#f5f5e9', letterSpacing: '0.01em' }}
+            >
+              Cover Letter
+            </Link>
+            <Link
               to="/my-resumes"
-              style={{
-                color: "var(--brand-cream)",
-                fontWeight: 500,
-                fontSize: "15px",
-                textDecoration: "none",
-                fontFamily: "Montserrat, sans-serif",
-                padding: "0 16px"
-              }}
+              className="nav-link"
+              style={{ color: '#f5f5e9', letterSpacing: '0.01em' }}
             >
               My Resumes
             </Link>
@@ -198,7 +152,7 @@ export default function Navbar({ page = "landing" }) {
                     zIndex: 100
                   }}>
                     <Link
-                      to="/my-resumes"
+                      to="/profile"
                       style={{
                         display: "block",
                         padding: "12px 16px",
@@ -210,7 +164,7 @@ export default function Navbar({ page = "landing" }) {
                       }}
                       onClick={() => setDropdownOpen(false)}
                     >
-                      My Resumes
+                      Edit Profile
                     </Link>
                     <button
                       onClick={() => {
@@ -238,32 +192,10 @@ export default function Navbar({ page = "landing" }) {
               <>
                 <Link
                   to="/login"
-                  style={{
-                    color: "var(--brand-cream)",
-                    fontWeight: 500,
-                    fontSize: "15px",
-                    textDecoration: "none",
-                    fontFamily: "Montserrat, sans-serif",
-                    padding: "0 16px"
-                  }}
+                  className="nav-btn"
+                  style={{ color: '#f5f5e9', letterSpacing: '0.01em' }}
                 >
                   Sign In
-                </Link>
-                <Link
-                  to="/login"
-                  style={{
-                    background: "var(--brand-olive)",
-                    color: "white",
-                    borderRadius: "40px",
-                    padding: "9px 26px",
-                    fontWeight: 600,
-                    textDecoration: "none",
-                    fontFamily: "Montserrat, sans-serif",
-                    border: "none",
-                    cursor: "pointer"
-                  }}
-                >
-                  Get Started
                 </Link>
               </>
             )}
