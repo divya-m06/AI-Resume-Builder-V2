@@ -120,32 +120,6 @@ export default function Login() {
           Sign in to access your resumes and career tools.
         </p>
 
-        {/* Google Sign In Button */}
-        <button
-          type="button"
-          disabled
-          style={{
-            width: "100%",
-            background: "#ccc",
-            color: "white",
-            borderRadius: "40px",
-            padding: "13px",
-            fontSize: "15px",
-            fontWeight: "600",
-            fontFamily: "Montserrat, sans-serif",
-            border: "none",
-            cursor: "not-allowed",
-            marginBottom: "24px"
-          }}
-        >
-          Continue with Google
-        </button>
-
-        {/* Divider */}
-        <div style={{
-          borderTop: "1px solid #eee",
-          margin: "24px 0"
-        }}></div>
 
         {/* Tab Switcher */}
         <div style={{
