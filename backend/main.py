@@ -3,7 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer
 from fastapi.responses import StreamingResponse
 import jwt
+import bcrypt
 import os
+import datetime
 from dotenv import load_dotenv
 from typing import Optional
 import json
@@ -14,12 +16,12 @@ load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env"))
 
 supabase_url = os.getenv("SUPABASE_URL")
 supabase_key = os.getenv("SUPABASE_KEY")
-
-print(f"DEBUG: SUPABASE_URL = {supabase_url}")
-print(f"DEBUG: SUPABASE_KEY = {supabase_key[:10] if supabase_key else None}")
+app_secret = os.getenv("APP_SECRET_KEY")
 
 if not supabase_url or not supabase_key:
     raise RuntimeError("SUPABASE_URL and SUPABASE_KEY must be set in .env")
+if not app_secret:
+    raise RuntimeError("APP_SECRET_KEY must be set in .env")
 
 supabase: Client = create_client(supabase_url, supabase_key)
 supabase_available = True
@@ -46,12 +48,11 @@ def get_optional_user(credentials=Depends(security)):
     try:
         payload = jwt.decode(
             credentials.credentials,
-            os.getenv("SUPABASE_JWT_SECRET"),
-            algorithms=["HS256"],
-            options={"verify_aud": False}
+            app_secret,
+            algorithms=["HS256"]
         )
         return payload
-    except:
+    except Exception:
         raise HTTPException(401, "Invalid token")
 
 def require_user(user=Depends(get_optional_user)):
@@ -86,13 +87,19 @@ async def signup(user_data: dict):
         if existing_email.data:
             raise HTTPException(400, "Email already exists")
 
-        # Insert new user
-        result = supabase.table("users").insert({
+        # Hash the password with bcrypt before storing
+        hashed_pw = bcrypt.hashpw(
+            user_data["password"].encode("utf-8"),
+            bcrypt.gensalt()
+        ).decode("utf-8")
+
+        # Insert new user with hashed password
+        supabase.table("users").insert({
             "name": user_data["name"],
             "email": user_data["email"],
             "userid": user_data["userid"],
             "phone": user_data.get("phone"),
-            "password": user_data["password"]
+            "password": hashed_pw
         }).execute()
 
         return {"message": "Account created successfully"}
@@ -107,15 +114,34 @@ async def login(credentials: dict):
         raise HTTPException(503, "Authentication service not configured")
 
     try:
-        # Query user by userid and password
-        result = supabase.table("users").select("*").eq("userid", credentials["userid"]).eq("password", credentials["password"]).execute()
+        # Fetch user by userid only — never query by plaintext password
+        result = supabase.table("users").select("*").eq("userid", credentials["userid"]).execute()
 
         if not result.data:
             raise HTTPException(401, "Invalid credentials")
 
         user = result.data[0]
+
+        # Verify the submitted password against the stored bcrypt hash
+        if not bcrypt.checkpw(
+            credentials["password"].encode("utf-8"),
+            user["password"].encode("utf-8")
+        ):
+            raise HTTPException(401, "Invalid credentials")
+
+        # Issue a signed JWT valid for 7 days
+        payload = {
+            "sub": user["id"],          # Supabase UUID — used by protected routes
+            "userid": user["userid"],
+            "name": user["name"],
+            "email": user["email"],
+            "exp": datetime.datetime.utcnow() + datetime.timedelta(days=7)
+        }
+        token = jwt.encode(payload, app_secret, algorithm="HS256")
+
         return {
             "message": "Login successful",
+            "token": token,
             "user": {
                 "userid": user["userid"],
                 "name": user["name"],

@@ -14,6 +14,12 @@ export async function apiFetch(path, options = {}) {
     headers.set("Content-Type", "application/json")
   }
 
+  // Auto-attach JWT Bearer token if one exists
+  const token = localStorage.getItem("auth_token")
+  if (token && !headers.has("Authorization")) {
+    headers.set("Authorization", `Bearer ${token}`)
+  }
+
   const normalizedPath = path.startsWith("/") ? path : `/${path}`
   const url = `${baseURL}${normalizedPath}`
 
@@ -42,7 +48,7 @@ export async function apiFetch(path, options = {}) {
 
   const ct = res.headers.get("content-type") || ""
 
-  if (ct.includes("application/pdf")) {
+  if (ct.includes("application/pdf") || ct.includes("application/vnd.openxmlformats")) {
     return res.blob()
   }
 
@@ -69,6 +75,10 @@ export const loginUser = async (userid, password) => {
     localStorage.removeItem("user")
     localStorage.setItem("auth_user", JSON.stringify(data.user))
   }
+  // Store the JWT token so apiFetch can attach it to protected requests
+  if (data?.token) {
+    localStorage.setItem("auth_token", data.token)
+  }
   return data
 }
 
@@ -80,6 +90,7 @@ export const signupUser = (formData) =>
 
 export const logoutUser = () => {
   localStorage.removeItem("auth_user")
+  localStorage.removeItem("auth_token")
   localStorage.removeItem("user")
 }
 

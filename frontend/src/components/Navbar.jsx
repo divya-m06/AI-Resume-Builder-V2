@@ -149,6 +149,19 @@ export default function Navbar({ page = "landing" }) {
             >
               JD Matcher
             </Link>
+            <Link
+              to="/my-resumes"
+              style={{
+                color: "var(--brand-cream)",
+                fontWeight: 500,
+                fontSize: "15px",
+                textDecoration: "none",
+                fontFamily: "Montserrat, sans-serif",
+                padding: "0 16px"
+              }}
+            >
+              My Resumes
+            </Link>
 
             {isLoggedIn ? (
               <div style={{ position: "relative" }} ref={dropdownRef}>

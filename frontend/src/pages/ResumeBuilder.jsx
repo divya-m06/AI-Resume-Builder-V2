@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
-import { apiFetch, getStoredUser } from "../services/api";
+import { apiFetch, getStoredUser, saveResume } from "../services/api";
+
 export default function ResumeBuilder() {
   const [fullName, setFullName] = useState("")
   const [email, setEmail] = useState("")

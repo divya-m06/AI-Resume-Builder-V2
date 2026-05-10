@@ -279,13 +279,4 @@ def analyze_skill_gap(job_role, resume_text, additional_skills=None):
         "suggestions": suggestions,
         "interview_questions": interview_questions
     }
-
-    interview_questions = interview_bank.get(job_role.lower(), [])
-
-    return {
-        "found_skills": found_skills,
-        "missing_skills": missing_skills,
-        "resume_score": resume_score,
-        "suggestions": suggestions,
-        "interview_questions": interview_questions
-    }
+
