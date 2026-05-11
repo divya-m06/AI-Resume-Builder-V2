@@ -7,6 +7,7 @@ export default function ResumeBuilder() {
   const [fullName, setFullName] = useState("")
   const [email, setEmail] = useState("")
   const [phone, setPhone] = useState("")
+  const [atsResult, setAtsResult] = useState(null)
   const [formData, setFormData] = useState({
     job_role: "",
     education: "",
@@ -72,6 +73,30 @@ export default function ResumeBuilder() {
       a.download = `resume_${fullName.replace(" ", "_")}.${format === "pdf" ? "pdf" : "docx"}`
       a.click()
       window.URL.revokeObjectURL(url)
+
+      // Call ATS score endpoint
+      try {
+        const atsResponse = await fetch(
+          `${import.meta.env.VITE_API_BASE_URL}/api/resume/ats-score`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              ...formData,
+              full_name: fullName,
+              email,
+              phone,
+              skills: skillsArray
+            })
+          }
+        )
+        if (atsResponse.ok) {
+          const atsData = await atsResponse.json()
+          setAtsResult(atsData)
+        }
+      } catch {
+        /* ignore ATS score errors */
+      }
     } catch (err) {
       setError("Something went wrong. Make sure the backend is running.")
     } finally {
@@ -578,6 +603,97 @@ export default function ResumeBuilder() {
               marginTop: "16px"
             }}>
               {error}
+            </div>
+          )}
+
+          {/* ATS Score Card */}
+          {atsResult && (
+            <div style={{
+              background: "white",
+              borderRadius: "16px",
+              border: "1px solid #ebebeb",
+              padding: "28px 32px",
+              marginTop: "24px"
+            }}>
+              <div style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "flex-start",
+                marginBottom: "20px"
+              }}>
+                <h3 style={{
+                  fontSize: "18px",
+                  fontWeight: "700",
+                  color: "var(--brand-charcoal)",
+                  margin: 0
+                }}>
+                  ATS Score
+                </h3>
+                <div style={{
+                  width: "80px",
+                  height: "80px",
+                  borderRadius: "50%",
+                  border: "6px solid var(--brand-olive)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "24px",
+                  fontWeight: "800",
+                  color: "var(--brand-charcoal)"
+                }}>
+                  {atsResult.score}
+                </div>
+              </div>
+
+              <h4 style={{
+                fontSize: "14px",
+                fontWeight: "700",
+                textTransform: "uppercase",
+                letterSpacing: "0.06em",
+                color: "var(--brand-olive-dk)",
+                marginTop: "20px",
+                marginBottom: "12px",
+                margin: "20px 0 12px 0"
+              }}>
+                AI Tips to Improve Your Resume
+              </h4>
+
+              <div>
+                {atsResult.tips && atsResult.tips.map((tip, index) => (
+                  <div key={index} style={{
+                    display: "flex",
+                    gap: "12px",
+                    marginBottom: "10px",
+                    alignItems: "flex-start"
+                  }}>
+                    <div style={{
+                      width: "24px",
+                      height: "24px",
+                      minWidth: "24px",
+                      borderRadius: "50%",
+                      background: "var(--brand-olive)",
+                      color: "white",
+                      fontSize: "12px",
+                      fontWeight: "700",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      flexShrink: 0
+                    }}>
+                      {index + 1}
+                    </div>
+                    <p style={{
+                      fontSize: "14px",
+                      color: "#555",
+                      lineHeight: "1.6",
+                      margin: 0,
+                      marginTop: "2px"
+                    }}>
+                      {tip}
+                    </p>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>

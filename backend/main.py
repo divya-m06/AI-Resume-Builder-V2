@@ -68,7 +68,7 @@ def require_user(user=Depends(get_optional_user)):
 from skill_gap import analyze_skill_gap
 from jd_matcher import analyze_jd
 from resume_engine import generate_pdf, generate_docx
-from llm_service import generate_learning_roadmap, generate_cover_letter
+from llm_service import generate_learning_roadmap, generate_cover_letter, generate_ats_score
 
 # Routes
 @app.get("/health")
@@ -307,6 +307,11 @@ async def download_resume_docx(resume_data: dict):
         media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         headers={"Content-Disposition": "attachment; filename=resume.docx"}
     )
+
+@app.post("/api/resume/ats-score")
+async def ats_score_analyze(resume_data: dict):
+    result = generate_ats_score(resume_data)
+    return result
 
 @app.post("/api/skill-gap/analyze")
 async def skill_gap_analyze(

@@ -126,4 +126,57 @@ def generate_cover_letter(data):
         return response.choices[0].message.content.strip()
     except Exception as e:
         print(f"Error generating cover letter: {e}")
-        return "Dear Hiring Manager,\n\nI am writing to express my strong interest in the job. I believe my skills and experience make me a great candidate for this role.\n\nBest regards,\nCandidate"
+        return "Dear Hiring Manager,\n\nI am writing to express my strong interest in the job. I believe my skills and experience make me a great candidate for this role.\n\nBest regards,\nCandidate"
+
+def generate_ats_score(resume_data: dict) -> dict:
+    """
+    Generate an ATS score and AI tips for resume improvement using Groq API.
+    resume_data: dict with keys like full_name, job_role, skills, experience, education, projects
+    Returns: {score: 0-100, tips: [list of actionable tips]}
+    """
+    import requests
+    import re
+    
+    prompt = f"""You are an ATS (Applicant Tracking System) expert.
+    Analyze this resume data and return ONLY valid JSON, no markdown, no preamble:
+    {{
+      "score": <number 0-100>,
+      "tips": [
+        "<specific actionable tip 1>",
+        "<specific actionable tip 2>",
+        "<specific actionable tip 3>",
+        "<specific actionable tip 4>"
+      ]
+    }}
+
+    Resume data:
+    Name: {resume_data.get('full_name')}
+    Job Role: {resume_data.get('job_role')}
+    Skills: {resume_data.get('skills')}
+    Experience: {resume_data.get('experience')}
+    Education: {resume_data.get('education')}
+    Projects: {resume_data.get('projects')}
+
+    Score based on: keyword density, quantified achievements, skills relevance, completeness.
+    Tips must be specific to THIS resume, not generic advice."""
+
+    headers = {
+        "Authorization": f"Bearer {os.getenv('GROQ_API_KEY')}",
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "model": "llama-3.3-70b-versatile",
+        "messages": [{"role": "user", "content": prompt}],
+        "temperature": 0.3
+    }
+    try:
+        res = requests.post(
+            "https://api.groq.com/openai/v1/chat/completions",
+            headers=headers, json=payload, timeout=30
+        )
+        content = res.json()["choices"][0]["message"]["content"]
+        content = re.sub(r"```json|```", "", content).strip()
+        return json.loads(content)
+    except Exception as e:
+        print(f"Error generating ATS score: {e}")
+        return {"score": 70, "tips": ["Add more quantified achievements", "Include relevant keywords from job description", "Expand your skills section", "Add more project details"]}
