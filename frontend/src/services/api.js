@@ -1,6 +1,7 @@
 import axios from "axios"
+import { API_BASE_URL } from "../config.js"
 
-const baseURL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000"
+const baseURL = API_BASE_URL
 
 const api = axios.create({
   baseURL,
@@ -120,11 +121,25 @@ export const downloadResumePDF = (id) =>
 export const deleteResume = (id) =>
   apiFetch(`/api/resume/${id}`, { method: "DELETE" })
 
-export const analyzeJD = (jdText, resumeText) =>
-  apiFetch("/api/jd-match", {
+/** Multipart upload: job description text + resume PDF/DOCX file (matches POST /api/jd-match). */
+export const analyzeJD = async (jdText, resumeFile) => {
+  const formData = new FormData()
+  formData.append("job_description", jdText)
+  formData.append("resume", resumeFile)
+  const token = localStorage.getItem("auth_token")
+  const headers = {}
+  if (token) headers.Authorization = `Bearer ${token}`
+  const res = await fetch(`${baseURL}/api/jd-match`, {
     method: "POST",
-    body: JSON.stringify({ jd_text: jdText, resume_text: resumeText }),
+    body: formData,
+    headers,
   })
+  if (!res.ok) {
+    const text = await res.text()
+    throw new Error(text || `JD match failed (${res.status})`)
+  }
+  return res.json()
+}
 
 export const analyzeJDFile = (resumeFile) => {
   const formData = new FormData()

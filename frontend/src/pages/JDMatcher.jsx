@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Navbar from '../components/Navbar'
+import { API_BASE_URL } from '../config.js'
 
 export default function JDMatcher() {
   const [jobDescription, setJobDescription] = useState("")
@@ -42,7 +43,7 @@ export default function JDMatcher() {
       formData.append('resume', resumeFile)
 
       const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}/api/jd-match`,
+        `${API_BASE_URL}/api/jd-match`,
         {
           method: 'POST',
           body: formData

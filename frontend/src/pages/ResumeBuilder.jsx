@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
-import { apiFetch, getStoredUser, saveResume } from "../services/api";
+import { apiFetch, getStoredUser, saveResume } from "../services/api"
+import { API_BASE_URL } from "../config.js"
 
 export default function ResumeBuilder() {
   const [fullName, setFullName] = useState("")
@@ -58,7 +59,7 @@ export default function ResumeBuilder() {
       }
 
       const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/api/resume/download-${format}`,
+        `${API_BASE_URL}/api/resume/download-${format}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -77,7 +78,7 @@ export default function ResumeBuilder() {
       // Call ATS score endpoint
       try {
         const atsResponse = await fetch(
-          `${import.meta.env.VITE_API_BASE_URL}/api/resume/ats-score`,
+          `${API_BASE_URL}/api/resume/ats-score`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },

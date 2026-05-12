@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
+import { API_BASE_URL } from '../config.js'
 
 const ANSWERS = {
   "Explain OOP concepts": "OOP stands for Object-Oriented Programming. The four main concepts are Encapsulation, Inheritance, Polymorphism, and Abstraction.",
@@ -67,7 +68,7 @@ export default function SkillGap() {
       formData.append("job_role", jobRole)
       formData.append("additional_skills", selectedSkills.join(","))
       const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/api/skill-gap/analyze`,
+        `${API_BASE_URL}/api/skill-gap/analyze`,
         { method: "POST", body: formData }
       )
       if (!response.ok) throw new Error("Analysis failed")

@@ -29,15 +29,21 @@ supabase: Client = create_client(supabase_url, supabase_key)
 supabase_available = True
 print("Supabase connected successfully")
 
-groq_client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+_groq_key = os.getenv("GROQ_API_KEY")
+groq_client = Groq(api_key=_groq_key) if _groq_key else None
 
 # Initialize FastAPI app
 app = FastAPI(title="AI Resume Builder API")
 
-# CORS middleware
+# CORS: comma-separated origins in FRONTEND_URL (e.g. prod + Vercel preview)
+_frontend_raw = os.getenv("FRONTEND_URL", "http://localhost:5173")
+_cors_origins = [o.strip() for o in _frontend_raw.split(",") if o.strip()]
+if not _cors_origins:
+    _cors_origins = ["http://localhost:5173"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[os.getenv("FRONTEND_URL", "http://localhost:5173")],
+    allow_origins=_cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -345,25 +351,29 @@ async def skill_gap_analyze(
         except:
             result["roadmap"] = None
     
-    # Generate interview questions
-    try:
-        iq_prompt = f"""Generate 5 interview questions with detailed answers for a {job_role} role.
+    # Generate interview questions (requires GROQ_API_KEY)
+    if groq_client:
+        try:
+            iq_prompt = f"""Generate 5 interview questions with detailed answers for a {job_role} role.
     Return ONLY valid JSON in this exact format, no markdown:
     [
         {{"question": "Question here?", "answer": "Detailed answer here."}}
     ]"""
-        iq_response = groq_client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
-            messages=[{"role": "user", "content": iq_prompt}],
-            max_tokens=1500
-        )
-        iq_content = iq_response.choices[0].message.content.strip()
-        if iq_content.startswith("```json"): iq_content = iq_content[7:]
-        if iq_content.startswith("```"): iq_content = iq_content[3:]
-        if iq_content.endswith("```"): iq_content = iq_content[:-3]
-        result["interview_questions"] = json.loads(iq_content.strip())
-    except Exception as e:
-        print(f"Interview Q gen error: {e}")
+            iq_response = groq_client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                messages=[{"role": "user", "content": iq_prompt}],
+                max_tokens=1500
+            )
+            iq_content = iq_response.choices[0].message.content.strip()
+            if iq_content.startswith("```json"): iq_content = iq_content[7:]
+            if iq_content.startswith("```"): iq_content = iq_content[3:]
+            if iq_content.endswith("```"): iq_content = iq_content[:-3]
+            result["interview_questions"] = json.loads(iq_content.strip())
+        except Exception as e:
+            print(f"Interview Q gen error: {e}")
+            result["interview_questions"] = []
+    else:
+        print("Skipping interview question generation: GROQ_API_KEY not set.")
         result["interview_questions"] = []
     
     return result

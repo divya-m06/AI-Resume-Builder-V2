@@ -1,216 +1,196 @@
 # AI Resume Builder
 
-A full-stack AI-powered career tools web application that helps users build professional resumes, analyze skill gaps against job roles, and match their resume against job descriptions — all in one place.
+Full-stack AI-powered career toolkit: build resumes (PDF/DOCX), analyze skill gaps with NLP, match resumes to job descriptions, generate cover letters and learning roadmaps—secured with JWT auth and Supabase storage.
 
 ---
 
 ## Features
 
 | Feature | Description |
-|---|---|
-| Resume Builder | Form-based resume generator. Fill in your details and download a professionally formatted PDF or DOCX instantly. |
-| Skill Gap Analyzer | Upload a resume file (PDF or DOCX), select a target job role, and get a breakdown of matched and missing skills using NLP. Includes course suggestions and interview questions. |
-| JD Keyword Matcher | Paste a job description and upload your resume file to get a keyword match score, matched keywords, and missing keywords. |
-| My Resumes | View all previously generated resumes saved to your account. Download as PDF or delete. |
-| Authentication | Secure custom signup and login with bcrypt password hashing and JWT-based session tokens. |
+|--------|-------------|
+| **Resume Builder** | Form-based generator; download PDF or DOCX; optional ATS-style score and tips. |
+| **Skill Gap Analyzer** | Upload PDF/DOCX; pick a role; NLP + fuzzy matching vs role skills; course links; optional Groq roadmap & interview Qs. |
+| **JD Keyword Matcher** | Paste a job description + upload resume; keyword overlap score and suggestions. |
+| **Cover Letter** | AI-generated letter from profile fields (Groq). |
+| **My Resumes** | List / download / delete saved resumes (Supabase). |
+| **Auth** | Signup/login with bcrypt-hashed passwords and JWT sessions. |
+
+---
+
+## Architecture
+
+```
+┌─────────────────┐     HTTPS / REST      ┌──────────────────┐
+│  React (Vite)   │ ◄──────────────────► │  FastAPI (Python) │
+│  Vercel / CDN   │    VITE_API_BASE_URL   │  Render / Docker   │
+└─────────────────┘                        └─────────┬────────┘
+                                                     │
+                                            ┌────────▼────────┐
+                                            │ Supabase (PG)   │
+                                            │ Groq (LLM APIs) │
+                                            └─────────────────┘
+```
+
+- **Frontend**: `frontend/` — React 19, React Router 7, Tailwind, Axios/fetch to API.
+- **Backend**: `backend/` — FastAPI, spaCy + rapidfuzz (skill extraction), Groq for LLM features, ReportLab / python-docx, pdfminer.
+- **Data**: Supabase PostgreSQL (`users`, `resumes`).
 
 ---
 
 ## Tech Stack
 
-**Frontend**
-- React 18 + Vite
-- Tailwind CSS
-- React Router v6
-- Axios
-- Deployed on Vercel
-
-**Backend**
-- FastAPI (Python)
-- spaCy (`en_core_web_sm`) + rapidfuzz — NLP-based skill extraction and fuzzy matching
-- Groq API (`llama-3.3-70b-versatile`) — AI-generated learning roadmaps
-- PyJWT + bcrypt — authentication
-- ReportLab — PDF generation
-- python-docx — DOCX generation
-- pdfminer.six — resume text extraction
-- Deployed on Render
-
-**Database**
-- Supabase (PostgreSQL)
+| Layer | Technologies |
+|-------|----------------|
+| Frontend | React 19, Vite 8, Tailwind CSS 3, React Router 7, Axios |
+| Backend | Python 3.11, FastAPI, Uvicorn, spaCy (`en_core_web_sm`), rapidfuzz, Groq API |
+| Auth | PyJWT, bcrypt |
+| Deploy | Vercel (frontend SPA), Render (`render.yaml` + `build.sh`), optional Docker |
 
 ---
 
-## Project Structure
+## Repository layout
 
 ```
 AI-Resume-Builder-V2/
 ├── backend/
-│   ├── main.py              # FastAPI app, all routes, auth logic
-│   ├── skill_gap.py         # Skill gap analysis and interview question bank
-│   ├── jd_matcher.py        # JD keyword extraction and match scoring
-│   ├── resume_engine.py     # PDF and DOCX generation
-│   ├── llm_service.py       # Groq API integration for roadmap generation
-│   ├── requirements.txt     # Pinned Python dependencies
-│   ├── build.sh             # Render build script (installs spaCy model)
-│   └── render.yaml          # Render deployment configuration
+│   ├── main.py           # API routes, CORS, auth
+│   ├── skill_gap.py      # Role skills + NLP extraction
+│   ├── jd_matcher.py     # JD vs resume keyword analysis
+│   ├── llm_service.py    # Groq: roadmap, cover letter, ATS
+│   ├── resume_engine.py  # PDF / DOCX generation
+│   ├── requirements.txt
+│   ├── runtime.txt       # Python 3.11.x for Render
+│   ├── build.sh          # pip install + spaCy model (with fallback wheel)
+│   ├── render.yaml       # Render Blueprint
+│   ├── Dockerfile        # Optional container deploy
+│   └── Procfile          # Heroku-style process type
 ├── frontend/
 │   ├── src/
-│   │   ├── pages/           # Landing, Login, Dashboard, ResumeBuilder, SkillGap, JDMatcher, MyResumes
-│   │   ├── components/      # Navbar, Footer
-│   │   ├── services/        # api.js — all backend API calls
-│   │   └── hooks/           # useAuth.js
-│   ├── vercel.json          # Vercel SPA routing configuration
-│   ├── package.json
-│   └── vite.config.js
+│   │   ├── config.js     # API_BASE_URL (env-driven)
+│   │   ├── services/api.js
+│   │   └── pages/ ...
+│   ├── vite.config.js
+│   ├── vercel.json       # SPA rewrites
+│   └── netlify.toml      # Netlify build + SPA redirects
+├── .env.example          # Index of required variables
 └── README.md
 ```
 
 ---
 
-## Local Setup
+## Prerequisites
 
-### Prerequisites
-
-- Python 3.10+
-- Node.js 18+
-- A Supabase project with `users` and `resumes` tables
-- A Groq API key
+- **Node.js** 18+ (20 LTS recommended)
+- **Python** 3.11 (matches `backend/runtime.txt`)
+- **Git**
+- Accounts / keys: **Supabase** project, **Groq** API key (recommended for AI features)
 
 ---
 
-### Backend
+## Quick start (local, Windows-friendly)
 
-**1. Navigate to the backend directory**
+### 1. Clone
 
 ```bash
+git clone <your-repo-url>
+cd AI-Resume-Builder-V2
+```
+
+### 2. Backend
+
+```powershell
 cd backend
-```
-
-**2. Create and activate a virtual environment**
-
-```bash
 python -m venv venv
-
-# Windows
-venv\Scripts\activate
-
-# macOS / Linux
-source venv/bin/activate
-```
-
-**3. Install dependencies**
-
-```bash
+.\venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-**4. Download the spaCy language model**
+Download the spaCy English model (required for skill-gap NLP):
 
-```bash
+```powershell
 python -m spacy download en_core_web_sm
 ```
 
-**5. Create a `.env` file in the `backend/` directory**
+If that command fails on Windows, install the wheel (matches spaCy 3.7.x):
 
-```
-SUPABASE_URL=your_supabase_project_url
-SUPABASE_KEY=your_supabase_anon_key
-GROQ_API_KEY=your_groq_api_key
-APP_SECRET_KEY=your_random_64_char_hex_secret
-FRONTEND_URL=http://localhost:5173
+```powershell
+pip install https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1-py3-none-any.whl
 ```
 
-Generate a secure `APP_SECRET_KEY` with:
+Create `backend/.env` from `backend/.env.example` and set:
 
-```bash
-python -c "import secrets; print(secrets.token_hex(32))"
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `SUPABASE_URL` | **Yes** | Supabase project URL |
+| `SUPABASE_KEY` | **Yes** | Supabase anon (or service) key |
+| `APP_SECRET_KEY` | **Yes** | JWT signing secret (`python -c "import secrets; print(secrets.token_hex(32))"`) |
+| `FRONTEND_URL` | **Yes** | CORS origin(s). Local: `http://localhost:5173`. Multiple: comma-separated URLs (no spaces). |
+| `GROQ_API_KEY` | No* | Groq API key. Without it the API still starts; LLM features use fallbacks or skip interview generation. |
+
+Start the API:
+
+```powershell
+uvicorn main:app --reload --host 127.0.0.1 --port 8000
 ```
 
-**6. Start the backend server**
+Health check: [http://127.0.0.1:8000/health](http://127.0.0.1:8000/health)
 
-```bash
-uvicorn main:app --reload
-```
+### 3. Frontend
 
-The API will be available at `http://localhost:8000`.
-Health check: `http://localhost:8000/health`
-
----
-
-### Frontend
-
-**1. Navigate to the frontend directory**
-
-```bash
-cd frontend
-```
-
-**2. Install dependencies**
-
-```bash
+```powershell
+cd ..\frontend
 npm install
 ```
 
-**3. Create a `.env` file in the `frontend/` directory**
+Create `frontend/.env`:
 
+```env
+VITE_API_BASE_URL=http://127.0.0.1:8000
 ```
-VITE_API_BASE_URL=http://localhost:8000
-```
 
-**4. Start the development server**
+Start the dev server:
 
-```bash
+```powershell
 npm run dev
 ```
 
-The app will be available at `http://localhost:5173`.
+Open [http://localhost:5173](http://localhost:5173).
+
+### 4. Production build (frontend)
+
+```powershell
+npm run build
+npm run preview
+```
+
+Build output is `frontend/dist/` (used by Vercel/Netlify).
 
 ---
 
-## Environment Variables
+## Environment variables (cheat sheet)
 
-### Backend (`backend/.env`)
+### Backend — `backend/.env`
 
-| Variable | Description |
-|---|---|
-| `SUPABASE_URL` | Your Supabase project URL |
-| `SUPABASE_KEY` | Your Supabase anon/service key |
-| `GROQ_API_KEY` | Your Groq API key for LLM roadmap generation |
-| `APP_SECRET_KEY` | Random secret used to sign JWT tokens (min 32 bytes hex) |
-| `FRONTEND_URL` | The frontend origin allowed by CORS (e.g. `http://localhost:5173` or your Vercel URL) |
+Copy from `backend/.env.example`.
 
-### Frontend (`frontend/.env`)
+- **`FRONTEND_URL`**: Single origin or comma-separated list, e.g.  
+  `https://myapp.vercel.app,https://myapp-git-main-org.vercel.app`
 
-| Variable | Description |
-|---|---|
-| `VITE_API_BASE_URL` | The backend base URL (e.g. `http://localhost:8000` or your Render URL) |
+### Frontend — `frontend/.env`
+
+Copy from `frontend/.env.example`.
+
+- **`VITE_API_BASE_URL`**: Public backend URL (no trailing slash), e.g. `https://your-api.onrender.com`
+
+Root `.env.example` summarizes both files (no secrets).
 
 ---
 
-## Supabase Table Schema
+## Supabase schema (minimal)
 
-**`users` table**
+**`users`**: `id` (uuid PK), `name`, `email` (unique), `userid` (unique), `phone`, `password` (bcrypt hash), `created_at`.
 
-| Column | Type | Notes |
-|---|---|---|
-| `id` | uuid | Primary key, auto-generated |
-| `name` | text | |
-| `email` | text | Unique |
-| `userid` | text | Unique, user-chosen login ID |
-| `phone` | text | Optional |
-| `password` | text | bcrypt hash — never stored as plaintext |
-| `created_at` | timestamptz | Auto-generated |
-
-**`resumes` table**
-
-| Column | Type | Notes |
-|---|---|---|
-| `id` | uuid | Primary key, auto-generated |
-| `user_id` | uuid | Foreign key referencing `users.id` |
-| `full_name` | text | |
-| `job_title` | text | |
-| `resume_data` | jsonb | Full resume payload |
-| `created_at` | timestamptz | Auto-generated |
+**`resumes`**: `id` (uuid PK), `user_id` (fk → `users.id`), `full_name`, `job_title`, `resume_data` (jsonb), `created_at`.
 
 ---
 
@@ -218,60 +198,74 @@ The app will be available at `http://localhost:5173`.
 
 ### Backend — Render
 
-**1.** Push the repository to GitHub.
-
-**2.** Go to [render.com](https://render.com) and create a new **Web Service**.
-
-**3.** Connect your GitHub repository. Set the **Root Directory** to `backend/`.
-
-**4.** Render will detect `render.yaml` automatically. Confirm:
-- Build Command: `bash build.sh`
-- Start Command: `uvicorn main:app --host 0.0.0.0 --port $PORT`
-
-**5.** Add the following environment variables in the Render dashboard:
-
-```
-SUPABASE_URL      = your_supabase_url
-SUPABASE_KEY      = your_supabase_key
-GROQ_API_KEY      = your_groq_key
-APP_SECRET_KEY    = your_secret_key
-FRONTEND_URL      = https://your-app.vercel.app
-```
-
-**6.** Deploy. Once live, verify with: `https://your-render-url.onrender.com/health`
-
----
+1. Push repo to GitHub.
+2. New **Web Service** → connect repo → **Root Directory**: `backend`.
+3. Build: `bash build.sh` · Start: `uvicorn main:app --host 0.0.0.0 --port $PORT`  
+   (`render.yaml` can define this for Blueprint deploys.)
+4. Set env vars: `SUPABASE_URL`, `SUPABASE_KEY`, `APP_SECRET_KEY`, `FRONTEND_URL`, `GROQ_API_KEY` (recommended).
+5. Health check path: `/health` (configured in `render.yaml`).
+6. Free tier may cold-start (~30s after idle).
 
 ### Frontend — Vercel
 
-**1.** Go to [vercel.com](https://vercel.com) and create a new project from your GitHub repository.
+1. Import repo; **Root Directory**: `frontend`.
+2. Framework: Vite (auto).
+3. Build: `npm run build` · Output: `dist`.
+4. Env: `VITE_API_BASE_URL=https://<your-render-host>.onrender.com`
+5. Redeploy backend or update `FRONTEND_URL` if the frontend URL changes (CORS).
 
-**2.** Set the **Root Directory** to `frontend/`.
+`frontend/vercel.json` rewrites all routes to `index.html` for SPA routing.
 
-**3.** Framework preset: **Vite** (auto-detected).
+### Frontend — Netlify
 
-**4.** Add the following environment variable:
+Use `frontend/netlify.toml` (build `npm run build`, publish `dist`, SPA redirect).
 
+### Backend — Docker
+
+From repo root:
+
+```bash
+docker build -t ai-resume-api ./backend
+docker run -p 8000:8000 --env-file backend/.env ai-resume-api
 ```
-VITE_API_BASE_URL = https://your-render-url.onrender.com
-```
 
-**5.** Deploy.
+### Backend — Railway / Heroku-style
 
-**6.** After deployment, go back to Render and update `FRONTEND_URL` to your Vercel URL, then redeploy the backend to apply the CORS update.
-
-> **Note:** Render free tier services spin down after 15 minutes of inactivity. The first request after inactivity may take 20–30 seconds to respond.
+- **Dockerfile**: `backend/Dockerfile`
+- **Procfile**: `backend/Procfile` (`$PORT` must be set by the platform)
 
 ---
 
-## Notes
+## Troubleshooting
 
-- The JD Keyword Matcher now accepts both a job description and an uploaded resume file.
-- Use PDF or DOCX files for resume upload.
-- If you change backend dependencies, reinstall them inside `backend/venv`.
+| Issue | What to check |
+|-------|----------------|
+| CORS errors in browser | `FRONTEND_URL` on backend must exactly match the site origin (scheme + host + port). Use comma-separated list for preview deployments. |
+| `SUPABASE_URL and SUPABASE_KEY must be set` | Create `backend/.env`; restart Uvicorn. |
+| Skill gap always empty / NLP errors | Run `python -m spacy download en_core_web_sm` or install the wheel (see above). |
+| Interview questions always empty | Set `GROQ_API_KEY`; without it, interview Q generation is skipped by design. |
+| Frontend calls wrong API | Set `VITE_API_BASE_URL`; rebuild after changing env (`npm run build`). |
+| Render build fails on spaCy | `build.sh` falls back to installing `en_core_web_sm` via pip wheel. |
 
 ---
 
-## Screenshots
+## Scripts reference
 
-Screenshots will be added after deployment.
+| Location | Command |
+|----------|---------|
+| Frontend | `npm run dev`, `npm run build`, `npm run preview`, `npm run lint` |
+| Backend | `uvicorn main:app --reload` (dev), `uvicorn main:app --host 0.0.0.0 --port 8000` (local prod test) |
+
+---
+
+## Security notes
+
+- Never commit `.env` files; use `.env.example` only as templates.
+- Rotate `APP_SECRET_KEY` if leaked.
+- Use Supabase **anon** key with RLS policies appropriate for production.
+
+---
+
+## License / hackathon
+
+Submitted for hackathon evaluation—ensure judges can run locally using the **Quick start** section and deploy using **Deployment** subsections.
