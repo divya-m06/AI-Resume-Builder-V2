@@ -491,33 +491,16 @@ roadmaps, Job Description keyword matching, and instant cover letter generation.
             </div>
             <p style={{ color: "var(--brand-cream2)", lineHeight: "1.6" }}>
               Build smarter resumes with AI-powered tools for career success.
+              <br />
+              <a
+                href="https://github.com/Thushark23/AI-ResumeBuilder"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "var(--brand-cream2)", textDecoration: "none" }}
+              >
+                View on GitHub
+              </a>
             </p>
-          </div>
-          <div>
-            <h4 style={{
-              color: "var(--brand-cream)",
-              fontWeight: "700",
-              marginBottom: "12px"
-            }}>
-              Support
-            </h4>
-            <ul style={{ listStyle: "none", padding: 0 }}>
-              <li style={{ marginBottom: "8px" }}>
-                <a href="#" style={{ color: "var(--brand-cream2)", textDecoration: "none" }}>
-                  Help Center
-                </a>
-              </li>
-              <li style={{ marginBottom: "8px" }}>
-                <a href="#" style={{ color: "var(--brand-cream2)", textDecoration: "none" }}>
-                  Contact Us
-                </a>
-              </li>
-              <li style={{ marginBottom: "8px" }}>
-                <a href="#" style={{ color: "var(--brand-cream2)", textDecoration: "none" }}>
-                  Privacy Policy
-                </a>
-              </li>
-            </ul>
           </div>
         </div>
         <div style={{
