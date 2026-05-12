@@ -60,7 +60,8 @@ export default function Landing() {
               lineHeight: "1.7",
               marginBottom: "32px"
             }} className="hero-subtext">
-              AI-powered resume builder with skill gap analysis, JD keyword matching, and personalized project recommendations.
+              AI-powered resume builder with skill gap analysis, week-by-week learning 
+roadmaps, Job Description keyword matching, and instant cover letter generation.
             </p>
 
             <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }} className="hero-buttons">
