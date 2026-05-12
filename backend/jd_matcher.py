@@ -69,13 +69,7 @@ def analyze_jd(jd_text, resume_text):
     # Generate AI suggestion via Groq
     suggestion = generate_jd_suggestion(matched_keywords, missing_keywords, score)
 
-    return {
-        "score": score,
-        "matched": matched_keywords,
-        "missing": missing_keywords,
-        "suggestion": suggestion
-    }
-
+    
     # Role to skill keyword mapping
     role_skill_map = {
         "data": ["data", "analysis", "sql", "excel", "dashboard", "statistics"],
@@ -331,7 +325,9 @@ def analyze_jd(jd_text, resume_text):
         ]
 
     return {
-        "score": score,
-        "matched_keywords": matched_keywords,
-        "suggested_projects": suggested_projects
+    "score": score,
+    "matched": matched_keywords,
+    "missing": missing_keywords,
+    "suggestion": suggestion,
+    "suggested_projects": suggested_projects
     }
