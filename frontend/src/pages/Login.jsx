@@ -150,7 +150,7 @@ export default function Login() {
               color: activeTab === "signin" ? "var(--brand-olive)" : "#888"
             }}
           >
-            Sign In
+            Log In
           </button>
           <button
             onClick={() => {
