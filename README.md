@@ -128,7 +128,7 @@ Health check: [http://127.0.0.1:8000/health](http://127.0.0.1:8000/health)
 ### 3. Frontend
 
 ```powershell
-cd ..\frontend
+cd frontend
 npm install
 ```
 
