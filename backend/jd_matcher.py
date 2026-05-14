@@ -69,7 +69,7 @@ def analyze_jd(jd_text, resume_text):
 
     # Extract keywords — filter out stop words and short words
     def extract_keywords(text):
-        words = re.findall(r'\b[a-zA-Z]{3,}\b', text.lower())
+        words = re.findall(r'\b[a-zA-Z0-9\.\+#]{2,}\b', text.lower())
         return {w for w in words if w not in STOP_WORDS}
 
     jd_keywords = extract_keywords(jd_text)
