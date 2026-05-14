@@ -1,4 +1,4 @@
-# Backend API — Python 3.11 (matches runtime.txt)
+Backend API — Python 3.11 (matches runtime.txt)
 FROM python:3.11-slim
 
 WORKDIR /app
