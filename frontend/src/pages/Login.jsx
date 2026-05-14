@@ -112,10 +112,10 @@ export default function Login() {
           textAlign: "center",
           marginBottom: "8px"
         }}>
-          Welcome Back
+          Welcome Back 
         </h1>
 
-        {/* Subtext */}
+        {/* Subtext Card */}
         <p style={{
           fontSize: "14px",
           color: "#888",
