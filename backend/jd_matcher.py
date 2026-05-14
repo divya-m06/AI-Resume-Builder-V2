@@ -3,26 +3,39 @@ import os
 from groq import Groq
 
 STOP_WORDS = {
-    "and", "the", "are", "have", "our", "with", "for", "that", "this",
-    "you", "your", "will", "was", "were", "been", "being", "they",
-    "their", "them", "from", "into", "about", "which", "when", "who",
-    "how", "what", "where", "should", "would", "could", "must", "may",
-    "can", "not", "but", "also", "all", "any", "each", "both", "few",
-    "more", "most", "other", "some", "such", "than", "too", "very",
-    "just", "like", "well", "own", "same", "so", "do", "did", "does",
-    "its", "it", "is", "in", "on", "at", "to", "of", "a", "an", "as",
-    "be", "by", "or", "if", "we", "us", "me", "my", "he", "she", "his",
-    "her", "up", "out", "no", "go", "new", "get", "use", "look", "only",
-    "over", "think", "also", "back", "after", "work", "first", "well",
-    "way", "even", "want", "because", "these", "give", "most", "write",
-    "need", "required", "responsibilities", "ideal", "candidate",
-    "looking", "preferred", "understand", "understanding", "develop",
-    "collaborate", "maintain", "optimize", "participate", "join",
-    "reviews", "review", "clean", "efficient", "motivated", "passion",
-    "speed", "scalability", "scalable", "software", "systems", "team",
-    "testing", "tools", "knowledge", "familiarity", "problem", "solving",
-    "code", "designers", "developers", "engineer", "intern", "node",
-    "html", "have", "build", "building", "applications"
+    "a", "an", "the", "and", "or", "but", "if", "while",
+    "with", "without", "to", "from", "for", "of", "on",
+    "in", "out", "by", "is", "are", "was", "were", "be",
+    "been", "being", "have", "has", "had", "do", "does",
+    "did", "this", "that", "these", "those", "it", "its",
+    "as", "at", "can", "could", "should", "would", "may",
+    "might", "must", "you", "your", "we", "our", "they",
+    "their", "them", "he", "his", "she", "her", "i", "me",
+    "my", "will", "shall",
+
+    # filler words
+    "candidate", "job", "role", "position", "company",
+    "team", "environment", "required", "preferred",
+    "responsibilities", "qualification", "experience",
+    "knowledge", "understanding", "familiarity",
+
+    # Generic verbs
+    "develop", "maintain", "optimize", "collaborate",
+    "participate", "support", "manage", "improve",
+
+    # Soft skills
+    "motivated", "passionate", "communication",
+    "problem", "solving", "analytical",
+
+    # Generic tech filler
+    "software", "application", "applications",
+    "system", "systems", "solution", "solutions",
+
+    #other common words
+    "using", "use", "ability", "including", "based",
+    "well", "also", "other", "such", "more", "most",
+    "some", "all", "any", "each", "few", "many",
+    "new", "need", "looking", "join", "ensure"
 }
 
 def generate_jd_suggestion(matched, missing, score):
@@ -66,11 +79,11 @@ def analyze_jd(jd_text, resume_text):
     missing_keywords = sorted(list(jd_keywords - resume_keywords))
     score = int((len(matched_keywords) / len(jd_keywords)) * 100) if jd_keywords else 0
 
-    # Generate AI suggestion via Groq
+    # Generate AI suggestion via Groq (Resume Score)
     suggestion = generate_jd_suggestion(matched_keywords, missing_keywords, score)
 
     
-    # Role to skill keyword mapping
+    # Role to skill keyword mapping 
     role_skill_map = {
         "data": ["data", "analysis", "sql", "excel", "dashboard", "statistics"],
         "data scientist": ["python", "machine", "learning", "ml", "deep", "ai"],
