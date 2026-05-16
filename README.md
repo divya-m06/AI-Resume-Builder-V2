@@ -92,8 +92,8 @@ AI-Resume-Builder-V2/
 ### 1. Clone
 
 ```bash
-git clone <your-repo-url>
-cd AI-Resume-Builder-V2
+git clone https://github.com/divya-m06/AI-Resume-Builder.git
+cd AI-Resume-Builder
 ```
 
 ### 2. Backend
